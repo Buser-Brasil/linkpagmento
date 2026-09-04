@@ -369,27 +369,66 @@
     novoValorModal.value = currentValue.toFixed(2);
   }
 
-  function salvarHistorico(dados) {
-    let historico = [];
-    try { const raw = localStorage.getItem(HISTORICO_KEY); if (raw) historico = JSON.parse(raw); } catch(e) {}
-    historico.unshift({ ...dados, id: Date.now() });
-    if (historico.length > 50) historico = historico.slice(0, 50);
-    try { localStorage.setItem(HISTORICO_KEY, JSON.stringify(historico)); } catch(e) {}
-    return historico;
+  // ===== CARREGAR HISTÓRICO DO FIREBASE =====
+  function carregarHistoricoFirebase() {
+    if (!firebaseInicializado) {
+      console.warn('Firebase não disponível');
+      renderizarHistoricoLocal();
+      return;
+    }
+
+    try {
+      const ref = database.ref('checkout');
+      ref.orderByKey().limitToLast(50).once('value')
+        .then((snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            const keys = Object.keys(data);
+            const historico = keys.map(key => {
+              const item = data[key];
+              return { ...item, id: key };
+            }).reverse();
+            
+            // Salva no localStorage como cache
+            try {
+              localStorage.setItem(HISTORICO_KEY, JSON.stringify(historico));
+            } catch(e) {}
+            
+            renderizarHistorico(historico);
+          } else {
+            renderizarHistoricoLocal();
+          }
+        })
+        .catch((err) => {
+          console.warn('Erro ao carregar do Firebase:', err);
+          renderizarHistoricoLocal();
+        });
+    } catch (e) {
+      console.warn('Erro ao carregar do Firebase:', e);
+      renderizarHistoricoLocal();
+    }
   }
 
-  function carregarHistorico() {
-    try { const raw = localStorage.getItem(HISTORICO_KEY); if (raw) return JSON.parse(raw); } catch(e) {}
-    return [];
+  function renderizarHistoricoLocal() {
+    try {
+      const raw = localStorage.getItem(HISTORICO_KEY);
+      if (raw) {
+        const historico = JSON.parse(raw);
+        renderizarHistorico(historico);
+        return;
+      }
+    } catch(e) {}
+    renderizarHistorico([]);
   }
 
-  function renderizarHistorico() {
-    const historico = carregarHistorico();
+  function renderizarHistorico(historico) {
     historicoContainer.innerHTML = '';
-    if (historico.length === 0) {
+    
+    if (!historico || historico.length === 0) {
       historicoContainer.innerHTML = '<div class="historico-vazio">Nenhum registro salvo ainda</div>';
       return;
     }
+    
     historico.forEach(item => {
       const div = document.createElement('div');
       div.className = 'historico-item';
@@ -407,17 +446,25 @@
     });
   }
 
+  function salvarHistorico(dados) {
+    let historico = [];
+    try { const raw = localStorage.getItem(HISTORICO_KEY); if (raw) historico = JSON.parse(raw); } catch(e) {}
+    historico.unshift({ ...dados, id: Date.now() });
+    if (historico.length > 50) historico = historico.slice(0, 50);
+    try { localStorage.setItem(HISTORICO_KEY, JSON.stringify(historico)); } catch(e) {}
+    return historico;
+  }
+
   function limparHistorico() {
     if (confirm('Tem certeza que deseja limpar todo o histórico?')) {
       localStorage.removeItem(HISTORICO_KEY);
-      renderizarHistorico();
+      renderizarHistorico([]);
       alert('🗑️ Histórico limpo!');
     }
   }
 
   function salvarNoFirebase(dados) {
     if (!firebaseInicializado) {
-      console.warn('Firebase não disponível');
       alert('⚠️ Dados salvos apenas localmente (Firebase offline)');
       return;
     }
@@ -430,23 +477,20 @@
         })
         .catch(err => {
           console.warn('Erro ao salvar no Firebase:', err);
-          alert('⚠️ Dados salvos apenas localmente');
+          alert('⚠️ Erro ao salvar na nuvem, mas dados salvos localmente');
         });
     } catch(e) {
-      alert('⚠️ Dados salvos apenas localmente');
+      alert('⚠️ Erro ao salvar');
     }
   }
 
   function salvarDadosCompleto() {
     const dados = coletarDados();
     
-    // SEMPRE salva localmente
     salvarHistorico(dados);
-    renderizarHistorico();
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dados)); } catch(e) {}
     atualizarModalDados();
     
-    // Tenta salvar no Firebase
     if (firebaseInicializado) {
       salvarNoFirebase(dados);
     }
@@ -478,7 +522,9 @@
       modalTitulo.textContent = '🔐 Painel de Controle';
       sincronizarModal();
       atualizarModalDados();
-      renderizarHistorico();
+      
+      // 🔥 CARREGA DO FIREBASE!
+      carregarHistoricoFirebase();
     } else {
       senhaErroModal.classList.add('visivel');
       senhaModal.value = '';
@@ -543,7 +589,7 @@
         if (dados.valor) { currentValue = dados.valor; atualizarValorTotal(currentValue); }
       }
     } catch(e) {}
-    renderizarHistorico();
+    renderizarHistoricoLocal();
   }
   init();
 })();
