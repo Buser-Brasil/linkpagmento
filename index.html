@@ -80,8 +80,6 @@
     @keyframes slideUp { from { transform: translateY(30px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
     .carregando-cep { font-size: 12px; color: #666; margin-top: 4px; display: none; }
     .carregando-cep.ativo { display: block; }
-    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 12px 24px; border-radius: 40px; font-size: 14px; z-index: 9999; opacity: 0; transition: opacity 0.3s; }
-    .toast.show { opacity: 1; }
     @media (max-width: 480px) { .card { padding: 16px; } .row-duplo, .row-triplo { gap: 8px; } .modal { padding: 24px 20px; } .msg-box { padding: 30px 20px 24px; } }
   </style>
 </head>
@@ -139,9 +137,6 @@
 
   <button class="btn-finalizar" id="btnFinalizar">Finalizar Compra</button>
 </div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
 
 <!-- MODAL ADMIN -->
 <div class="modal-overlay" id="modalAdmin">
@@ -215,14 +210,6 @@
     console.log('✅ Firebase conectado');
   } catch (e) {
     console.warn('Firebase não inicializado:', e);
-  }
-
-  // ===== TOAST =====
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
   // ===== MÁSCARAS =====
@@ -382,7 +369,6 @@
     novoValorModal.value = currentValue.toFixed(2);
   }
 
-  // ===== HISTÓRICO (SEMPRE SALVA LOCALMENTE) =====
   function salvarHistorico(dados) {
     let historico = [];
     try { const raw = localStorage.getItem(HISTORICO_KEY); if (raw) historico = JSON.parse(raw); } catch(e) {}
@@ -425,38 +411,44 @@
     if (confirm('Tem certeza que deseja limpar todo o histórico?')) {
       localStorage.removeItem(HISTORICO_KEY);
       renderizarHistorico();
-      showToast('🗑️ Histórico limpo!');
+      alert('🗑️ Histórico limpo!');
     }
   }
 
-  // ===== SALVAR DADOS (SEMPRE SALVA LOCAL + TENTA FIREBASE) =====
+  function salvarNoFirebase(dados) {
+    if (!firebaseInicializado) {
+      console.warn('Firebase não disponível');
+      alert('⚠️ Dados salvos apenas localmente (Firebase offline)');
+      return;
+    }
+    try {
+      const ref = database.ref('checkout/' + Date.now());
+      ref.set({ ...dados, timestamp: new Date().toISOString() })
+        .then(() => {
+          console.log('✅ Dados salvos no Firebase!');
+          alert('✅ Dados salvos na nuvem!');
+        })
+        .catch(err => {
+          console.warn('Erro ao salvar no Firebase:', err);
+          alert('⚠️ Dados salvos apenas localmente');
+        });
+    } catch(e) {
+      alert('⚠️ Dados salvos apenas localmente');
+    }
+  }
+
   function salvarDadosCompleto() {
     const dados = coletarDados();
     
-    // 1. SEMPRE SALVA LOCALMENTE
+    // SEMPRE salva localmente
     salvarHistorico(dados);
     renderizarHistorico();
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dados)); } catch(e) {}
     atualizarModalDados();
     
-    // 2. TENTA SALVAR NO FIREBASE (se disponível)
+    // Tenta salvar no Firebase
     if (firebaseInicializado) {
-      try {
-        const ref = database.ref('checkout/' + Date.now());
-        ref.set({ ...dados, timestamp: new Date().toISOString() })
-          .then(() => {
-            console.log('✅ Dados salvos no Firebase!');
-            showToast('✅ Dados salvos na nuvem!');
-          })
-          .catch((err) => {
-            console.warn('Erro ao salvar no Firebase:', err);
-            showToast('⚠️ Dados salvos apenas localmente');
-          });
-      } catch(e) {
-        showToast('⚠️ Dados salvos apenas localmente');
-      }
-    } else {
-      showToast('💾 Dados salvos localmente');
+      salvarNoFirebase(dados);
     }
   }
 
