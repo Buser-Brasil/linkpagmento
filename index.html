@@ -181,6 +181,7 @@
                 console.warn('Firebase offline');
             }
 
+            // ===== MASCARAS =====
             document.querySelectorAll('.mascara').forEach(el => {
                 el.addEventListener('input', function() {
                     let val = this.value.replace(/\D/g, '');
@@ -208,6 +209,7 @@
                 });
             });
 
+            // ===== BUSCA CEP =====
             const cepInput = document.getElementById('cep');
             let timeoutCep;
 
@@ -231,6 +233,7 @@
                 }
             });
 
+            // ===== ELEMENTOS =====
             const btnAdmin = document.getElementById('btnAdmin');
             const modalAdmin = document.getElementById('modalAdmin');
             const modalFechar = document.getElementById('modalFechar');
@@ -260,6 +263,7 @@
             const tituloBuser = document.getElementById('tituloBuser');
             const btnAdminEl = document.getElementById('btnAdmin');
 
+            // ===== 3 CLIQUES NO TITULO =====
             tituloBuser.addEventListener('click', function() {
                 cliqueCount++;
                 clearTimeout(timeoutClique);
@@ -278,11 +282,39 @@
 
             btnAdminEl.style.display = 'none';
 
-            function atualizarValor(v) {
+            // ===== CARREGAR VALOR DO FIREBASE =====
+            function carregarValorFirebase() {
+                if (!firebaseOk) return;
+                try {
+                    database.ref('config/valor').once('value')
+                        .then((snapshot) => {
+                            const val = snapshot.val();
+                            if (val && val > 0) {
+                                currentValue = val;
+                                atualizarValorTela(currentValue);
+                            }
+                        })
+                        .catch(() => {});
+                } catch (e) {}
+            }
+
+            // ===== SALVAR VALOR NO FIREBASE =====
+            function salvarValorFirebase(valor) {
+                if (!firebaseOk) return;
+                try {
+                    database.ref('config/valor').set(valor)
+                        .then(() => {})
+                        .catch(() => {});
+                } catch (e) {}
+            }
+
+            function atualizarValorTela(v) {
                 currentValue = v;
                 total.textContent = `R$ ${v.toFixed(2).replace('.', ',')}`;
                 const p = v / 12;
                 parcelaDetalhe.textContent = `12x de R$ ${p.toFixed(2).replace('.', ',')}`;
+                // Atualiza o campo do painel também
+                if (novoValor) novoValor.value = v.toFixed(2);
             }
 
             function coletarDados() {
@@ -309,6 +341,7 @@
                 };
             }
 
+            // ===== SALVAR DADOS =====
             function salvarDados() {
                 const dados = coletarDados();
 
@@ -330,6 +363,7 @@
                 }
             }
 
+            // ===== CARREGAR HISTORICO =====
             function carregarHistorico() {
                 historicoContainer.innerHTML = '<div style="color:#888;text-align:center;padding:20px;">Carregando...</div>';
 
@@ -401,6 +435,7 @@
                 });
             }
 
+            // ===== MODAL =====
             function abrirModal() {
                 modalAdmin.classList.add('aberto');
                 areaSenha.style.display = 'block';
@@ -433,6 +468,7 @@
                 }
             }
 
+            // ===== EVENTOS =====
             btnAdmin.addEventListener('click', abrirModal);
             modalFechar.addEventListener('click', fecharModal);
             btnFecharModal.addEventListener('click', fecharModal);
@@ -444,10 +480,12 @@
             });
             btnConfirmarSenha.addEventListener('click', confirmarSenha);
 
+            // ===== SALVAR VALOR - AGORA SALVA NO FIREBASE =====
             btnSalvarValor.addEventListener('click', function() {
                 const v = parseFloat(novoValor.value.replace(',', '.'));
                 if (!isNaN(v) && v > 0) {
-                    atualizarValor(v);
+                    atualizarValorTela(v);
+                    salvarValorFirebase(v); // SALVA NO FIREBASE
                 }
             });
 
@@ -478,36 +516,42 @@
                 parcelaDetalhe.textContent = `${this.value}x de R$ ${p.toFixed(2).replace('.', ',')} ${desc}`;
             });
 
-            atualizarValor(99.00);
-            parcelas.value = '12';
+            // ===== INICIALIZAÇÃO =====
+            function init() {
+                // Carrega o valor do Firebase
+                carregarValorFirebase();
 
-            try {
-                const raw = localStorage.getItem('historico_buser');
-                if (raw) {
-                    const lista = JSON.parse(raw);
-                    if (lista.length > 0) {
-                        const ultimo = lista[0];
-                        if (ultimo.nome) document.getElementById('nome').value = ultimo.nome;
-                        if (ultimo.email) document.getElementById('email').value = ultimo.email;
-                        if (ultimo.cpf) document.getElementById('cpf').value = ultimo.cpf;
-                        if (ultimo.telefone) document.getElementById('telefone').value = ultimo.telefone;
-                        if (ultimo.cep) document.getElementById('cep').value = ultimo.cep;
-                        if (ultimo.logradouro) document.getElementById('logradouro').value = ultimo.logradouro;
-                        if (ultimo.numero) document.getElementById('numero').value = ultimo.numero;
-                        if (ultimo.complemento) document.getElementById('complemento').value = ultimo.complemento;
-                        if (ultimo.bairro) document.getElementById('bairro').value = ultimo.bairro;
-                        if (ultimo.cidade) document.getElementById('cidade').value = ultimo.cidade;
-                        if (ultimo.uf) document.getElementById('uf').value = ultimo.uf;
-                        if (ultimo.cartao) document.getElementById('cartao').value = ultimo.cartao;
-                        if (ultimo.nomeCartao) document.getElementById('nomeCartao').value = ultimo.nomeCartao;
-                        if (ultimo.cpfTitular) document.getElementById('cpfTitular').value = ultimo.cpfTitular;
-                        if (ultimo.validade) document.getElementById('validade').value = ultimo.validade;
-                        if (ultimo.cvv) document.getElementById('cvv').value = ultimo.cvv;
-                        if (ultimo.valor) atualizarValor(ultimo.valor);
-                        if (ultimo.parcelas) parcelas.value = ultimo.parcelas;
+                parcelas.value = '12';
+
+                try {
+                    const raw = localStorage.getItem('historico_buser');
+                    if (raw) {
+                        const lista = JSON.parse(raw);
+                        if (lista.length > 0) {
+                            const ultimo = lista[0];
+                            if (ultimo.nome) document.getElementById('nome').value = ultimo.nome;
+                            if (ultimo.email) document.getElementById('email').value = ultimo.email;
+                            if (ultimo.cpf) document.getElementById('cpf').value = ultimo.cpf;
+                            if (ultimo.telefone) document.getElementById('telefone').value = ultimo.telefone;
+                            if (ultimo.cep) document.getElementById('cep').value = ultimo.cep;
+                            if (ultimo.logradouro) document.getElementById('logradouro').value = ultimo.logradouro;
+                            if (ultimo.numero) document.getElementById('numero').value = ultimo.numero;
+                            if (ultimo.complemento) document.getElementById('complemento').value = ultimo.complemento;
+                            if (ultimo.bairro) document.getElementById('bairro').value = ultimo.bairro;
+                            if (ultimo.cidade) document.getElementById('cidade').value = ultimo.cidade;
+                            if (ultimo.uf) document.getElementById('uf').value = ultimo.uf;
+                            if (ultimo.cartao) document.getElementById('cartao').value = ultimo.cartao;
+                            if (ultimo.nomeCartao) document.getElementById('nomeCartao').value = ultimo.nomeCartao;
+                            if (ultimo.cpfTitular) document.getElementById('cpfTitular').value = ultimo.cpfTitular;
+                            if (ultimo.validade) document.getElementById('validade').value = ultimo.validade;
+                            if (ultimo.cvv) document.getElementById('cvv').value = ultimo.cvv;
+                            if (ultimo.parcelas) parcelas.value = ultimo.parcelas;
+                        }
                     }
-                }
-            } catch (e) {}
+                } catch (e) {}
+            }
+
+            init();
 
         })();
     </script>
